@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Vector3.h"
+#include "Sphere.h"
 
 int main()
 {
@@ -54,4 +55,7 @@ int main()
     Vector3 crossEwithFNormalized = crossEwithF.Normalize();
     std::cout << "\nNormalized previous vector: \n";
     crossEwithFNormalized.WriteCoordsToConsole();
+
+
+    Sphere test(10.0f, Vector3({0.0f, 0.0f, 0.0f}));
 }

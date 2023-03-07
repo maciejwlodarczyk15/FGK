@@ -9,6 +9,11 @@ Vector3::Vector3(float3 coordinates)
 	coords = coordinates;
 }
 
+Vector3::Vector3()
+{
+	coords = { 0.0f, 0.0f, 0.0f };
+}
+
 float Vector3::Length()
 {
 	return sqrt(coords.x * coords.x + coords.y * coords.y + coords.z * coords.z);

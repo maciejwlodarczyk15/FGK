@@ -8,6 +8,7 @@ private:
 
 public:
 	Vector3(float3 coordinates);
+	Vector3();
 
 	float Length();
 
