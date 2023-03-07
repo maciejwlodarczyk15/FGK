@@ -9,5 +9,7 @@ private:
 
 public:
 	Sphere(float r, Vector3 point);
+	Vector3 GetCenter();
+	float GetRadius();
 };
 

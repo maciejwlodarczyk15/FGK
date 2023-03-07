@@ -25,6 +25,12 @@ Vector3 Vector3::Add(Vector3 givenVector)
 	return newVector;
 }
 
+Vector3 Vector3::Substract(Vector3 givenVector)
+{
+	Vector3 newVector({coords.x - givenVector.GetCoords().x, coords.y - givenVector.GetCoords() .y, coords.z - givenVector.GetCoords().z});
+	return newVector;
+}
+
 float Vector3::Dot(Vector3 givenVector)
 {
 	float result = coords.x * givenVector.GetCoords().x + coords.y * givenVector.GetCoords().y + coords.z * givenVector.GetCoords().z;
