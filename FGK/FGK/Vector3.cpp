@@ -4,14 +4,15 @@
 
 #define M_PI 3.14159265358979323846
 
-Vector3::Vector3(float3 coordinates)
-{
-	coords = coordinates;
-}
-
+// Default constructor
 Vector3::Vector3()
 {
 	coords = { 0.0f, 0.0f, 0.0f };
+}
+
+Vector3::Vector3(float3 coordinates)
+{
+	coords = coordinates;
 }
 
 float Vector3::Length()

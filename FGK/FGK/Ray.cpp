@@ -41,12 +41,12 @@ bool Ray::intersectPlane(Plane plane, Vector3& contactPoint)
         return false;
     }
 
-    float t = -plane.GetNormal().Dot(origin - plane.GetPoint()) / ndotD;
+    float t = plane.GetNormal().Dot(plane.GetPoint() - origin) / ndotD;
 
-    if (t <= 0) {
+    if (t < 0) {
         return false;
     }
-
+    
     contactPoint = origin + direction * t;
     return true;
 }

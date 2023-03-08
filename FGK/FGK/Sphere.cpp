@@ -6,12 +6,12 @@ Sphere::Sphere(float r, Vector3 point)
 	center = point;
 }
 
-Vector3 Sphere::GetCenter()
-{
-	return center;
-}
-
 float Sphere::GetRadius()
 {
 	return radius;
+}
+
+Vector3 Sphere::GetCenter()
+{
+	return center;
 }

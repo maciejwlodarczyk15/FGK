@@ -112,7 +112,6 @@ int main()
         std::cout << "\nThe ray: R2 does not intersect with the sphere: S";
     }
 
-    
     // 12. Prosze zdefiniowac dowolny promien R3, tak aby przecinal on sfere S w dokładnie jednym punkcie. 
     // Podac wspolrzedne punktu przeciecia.
     Vector3 contactPointR3({ 0.0, 0.0, 0.0 });
@@ -130,38 +129,19 @@ int main()
 
     // 13. Prosze zdefiniowac plaszczyzne P przechodzaca przez punkt (0,0,0), ktorej 
     // wektor normalny tworzy kat 45 stopni z osiami Y i Z.
-    //      Vector3 PlaneNormal({ 1.0f, 1.0f, 0.0f });
-    //      Vector3 PlaneNormalNormalized = PlaneNormal.Normalize();
-    //      Plane p(PlaneNormalNormalized, Vector3({0.0f, 0.0f, 0.0f}));
 
     // 14. Prosze znalezc punkt przeciecia plaszczyzny P z promieniem R2.
-    //     Vector3 contactPointR2P({ 0.0, 0.0, 0.0 });
-    //     if (r2.intersectPlane(p, contactPointR2P)) 
-    //     {
-    //         std::cout << "\nThe ray: R2 intersects with the plane: P at: \n";
-    //         contactPointR2P.WriteCoordsToConsole();
-    //     }
-    //     else 
-    //     {
-    //         std::cout << "\nThe ray: R2 does not intersect with the plane: P";
-    //     }
-    //     
-    //     std::cout << "\n\n";
-    Vector3 chuj({ 0.0f, 0.0f, -20.0f });
-    Vector3 rayDirection({ 0.0f, 1.0f, 0.0f });
-    Ray r(chuj, rayDirection);
-
-    Vector3 planeNormal = Vector3({ 1.0f, 1.0f, 0.0f }).Normalize();
-    Vector3 planePoint({ 0.0f, 0.0f, 0.0f });
-    Plane p(planeNormal, planePoint);
-
-    Vector3 contactPoint;
-    if (r.intersectPlane(p, contactPoint)){
-    //if (intersect(r, p, contactPoint)) {
-        std::cout << "Intersection at: ";
-        contactPoint.WriteCoordsToConsole();
+    Plane p(Vector3({ 0.0f, 1.0f, 1.0f }), Vector3({ 0.0f, 0.0f, 0.0f }));
+    Vector3 newContactPoint({ 0.0f,0.0f,0.0f });
+    if (r2.intersectPlane(p, newContactPoint))
+    {
+        std::cout << "\nThe ray: R2 intersects with the plane: P at: \n ";
+        newContactPoint.WriteCoordsToConsole();
     }
-    else {
-        std::cout << "No intersection.\n";
+    else
+    {
+        std::cout << "\nThe ray: R2 does not intersect with the plane: P";
     }
+
+    std::cout << "\n\n";
 }
