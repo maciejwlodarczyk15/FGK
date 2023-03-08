@@ -2,12 +2,12 @@
 #include "Vector3.h"
 #include "Sphere.h"
 #include "Ray.h"
+#include "Plane.h"
 
 int main()
 {
     // 2. Sprawdz czy prawidlowo dziala przemiennosc dodawania za pomoca 
-    // odpowiedniego zdefiniowania przykladowych wektorow i ich sumy 
-    // w funkcji main(). 
+    // odpowiedniego zdefiniowania przykladowych wektorow i ich sumy w funkcji main(). 
 
     Vector3 a({1.0f, 3.0f, 9.0f});
     Vector3 b({4.0f, 8.0f, 12.0f});
@@ -52,8 +52,7 @@ int main()
     std::cout << "\nAngle between c and d: \n" << angleBetweenCandD;
 
     // 4. Znajdz wektor prostopadly do wektorow [4,5,1] i [4,1,3]
-    // !!! Iloczyn wektorowy dwoch wektorow daje wektor prostopadly
-    // !!! do obu z nich
+    // !!! Iloczyn wektorowy dwoch wektorow daje wektor prostopadly do obu z nich
 
     Vector3 e({4.0f, 5.0f, 1.0f});
     Vector3 f({4.0f, 1.0f, 3.0f});
@@ -127,5 +126,42 @@ int main()
     else
     {
         std::cout << "\nThe ray: R3 does not intersect with the sphere: S";
+    }
+
+    // 13. Prosze zdefiniowac plaszczyzne P przechodzaca przez punkt (0,0,0), ktorej 
+    // wektor normalny tworzy kat 45 stopni z osiami Y i Z.
+    //      Vector3 PlaneNormal({ 1.0f, 1.0f, 0.0f });
+    //      Vector3 PlaneNormalNormalized = PlaneNormal.Normalize();
+    //      Plane p(PlaneNormalNormalized, Vector3({0.0f, 0.0f, 0.0f}));
+
+    // 14. Prosze znalezc punkt przeciecia plaszczyzny P z promieniem R2.
+    //     Vector3 contactPointR2P({ 0.0, 0.0, 0.0 });
+    //     if (r2.intersectPlane(p, contactPointR2P)) 
+    //     {
+    //         std::cout << "\nThe ray: R2 intersects with the plane: P at: \n";
+    //         contactPointR2P.WriteCoordsToConsole();
+    //     }
+    //     else 
+    //     {
+    //         std::cout << "\nThe ray: R2 does not intersect with the plane: P";
+    //     }
+    //     
+    //     std::cout << "\n\n";
+    Vector3 chuj({ 0.0f, 0.0f, -20.0f });
+    Vector3 rayDirection({ 0.0f, 1.0f, 0.0f });
+    Ray r(chuj, rayDirection);
+
+    Vector3 planeNormal = Vector3({ 1.0f, 1.0f, 0.0f }).Normalize();
+    Vector3 planePoint({ 0.0f, 0.0f, 0.0f });
+    Plane p(planeNormal, planePoint);
+
+    Vector3 contactPoint;
+    if (r.intersectPlane(p, contactPoint)){
+    //if (intersect(r, p, contactPoint)) {
+        std::cout << "Intersection at: ";
+        contactPoint.WriteCoordsToConsole();
+    }
+    else {
+        std::cout << "No intersection.\n";
     }
 }

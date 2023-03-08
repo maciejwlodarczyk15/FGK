@@ -31,3 +31,22 @@ bool Ray::intersectsSphere(Sphere sphere, Vector3& contactPoint)
         }
     }
 }
+
+bool Ray::intersectPlane(Plane plane, Vector3& contactPoint)
+{
+    const float ndotD = plane.GetNormal().Dot(direction);
+
+    if (ndotD == 0)
+    {
+        return false;
+    }
+
+    float t = -plane.GetNormal().Dot(origin - plane.GetPoint()) / ndotD;
+
+    if (t <= 0) {
+        return false;
+    }
+
+    contactPoint = origin + direction * t;
+    return true;
+}
