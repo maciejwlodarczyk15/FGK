@@ -42,3 +42,14 @@ public:
 	}
 };
 
+class Vector2
+{
+private:
+	float2 coords;
+
+public:
+	Vector2(float2 coordinates);
+
+	float2 GetCoords();
+	void WriteCoordsToConsole();
+};

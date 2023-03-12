@@ -77,5 +77,27 @@ float3 Vector3::GetCoords()
 
 void Vector3::WriteCoordsToConsole()
 {
-	std::cout << "x: " << coords.x << ", y: " << coords.y << ", z: " << coords.z;
+	std::cout << "(x: " << coords.x << ", y: " << coords.y << ", z: " << coords.z << ")";
+}
+
+
+/*
+		VECTOR2
+*/
+
+
+
+Vector2::Vector2(float2 coordinates)
+{
+	coords = coordinates;
+}
+
+float2 Vector2::GetCoords()
+{
+	return coords;
+}
+
+void Vector2::WriteCoordsToConsole()
+{
+	std::cout << "(x: " << coords.x << ", y: " << coords.y << ")";
 }
