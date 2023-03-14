@@ -22,17 +22,17 @@ Matrix4x4 Camera::GetViewMatrix()
     
     Matrix4x4 result;
     result.Indentity();
-    result(0, 0) = xAxis.GetCoords().x;
-    result(0, 1) = xAxis.GetCoords().y;
-    result(0, 2) = xAxis.GetCoords().z;
+    result(0, 0) = xAxis.x;
+    result(0, 1) = xAxis.y;
+    result(0, 2) = xAxis.z;
     result(0, 3) = -xAxis.Dot(position);
-    result(1, 0) = yAxis.GetCoords().x;
-    result(1, 1) = yAxis.GetCoords().y;
-    result(1, 2) = yAxis.GetCoords().z;
+    result(1, 0) = yAxis.x;
+    result(1, 1) = yAxis.y;
+    result(1, 2) = yAxis.z;
     result(1, 3) = -yAxis.Dot(position);
-    result(2, 0) = zAxis.GetCoords().x;
-    result(2, 1) = zAxis.GetCoords().y;
-    result(2, 2) = zAxis.GetCoords().z;
+    result(2, 0) = zAxis.x;
+    result(2, 1) = zAxis.y;
+    result(2, 2) = zAxis.z;
     result(2, 3) = zAxis.Dot(position);
 
     return result;

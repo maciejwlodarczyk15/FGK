@@ -7,7 +7,7 @@
 
 int main()
 {
-	Mesh newMesh("stozek.obj");
+	Mesh newMesh("untitled.obj");
 	newMesh.GetVertices();
 	newMesh.GetNormals();
 	newMesh.GetTexcoords();

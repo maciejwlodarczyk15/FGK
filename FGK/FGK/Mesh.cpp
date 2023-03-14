@@ -22,21 +22,21 @@ Mesh::Mesh(const std::string& filename)
 			{
 				float x, y, z;
 				iss >> x >> y >> z;
-				Vector3 position(float3({ x, y, z }));
+				Vector3 position(Vector3(x, y, z));
 				vertices.push_back(position);
 			}
 			if (type == "vn")
 			{
 				float x, y, z;
 				iss >> x >> y >> z;
-				Vector3 normal(float3({ x, y, z }));
+				Vector3 normal(Vector3(x, y, z));
 				normals.push_back(normal);
 			}
 			else if (type == "vt")
 			{
 				float x, y;
 				iss >> x >> y;
-				Vector2 texcoord(float2({ x, y }));
+				Vector2 texcoord(Vector2( x, y ));
 				texcoords.push_back(texcoord);
 			}
 			else if (type == "f")

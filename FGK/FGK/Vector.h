@@ -3,12 +3,11 @@
 
 class Vector3
 {
-private:
-	float3 coords;
-
 public:
-	Vector3(float3 coordinates);
-	Vector3();
+	float x, y, z;
+
+	Vector3() : x(0.0f), y(0.0f), z(0.0f) {}
+	Vector3(float x, float y, float z): x(x), y(y), z(z) {}
 
 	float Length();
 
@@ -20,36 +19,34 @@ public:
 
 	float AngleBetweenVectors(Vector3 givenVector);
 
-	float3 GetCoords();
 	void WriteCoordsToConsole();
 
 	Vector3 operator+(Vector3 givenVector)
 	{
-		Vector3 newVector({ coords.x + givenVector.GetCoords().x, coords.y + givenVector.GetCoords().y , coords.z + givenVector.GetCoords().z });
+		Vector3 newVector({ x + givenVector.x, y + givenVector.y , z + givenVector.z });
 		return newVector;
 	}
 
 	Vector3 operator-(Vector3 givenVector)
 	{
-		Vector3 newVector({coords.x - givenVector.GetCoords().x, coords.y - givenVector.GetCoords().y , coords.z - givenVector.GetCoords().z});
+		Vector3 newVector({ x - givenVector.x, y - givenVector.y , z - givenVector.z});
 		return newVector;
 	}
 
 	Vector3 operator*(float number)
 	{
-		Vector3 newVector({ coords.x * number, coords.y * number, coords.z * number });
+		Vector3 newVector({ x * number, y * number,z * number });
 		return newVector;
 	}
 };
 
 class Vector2
 {
-private:
-	float2 coords;
-
 public:
-	Vector2(float2 coordinates);
+	float x, y;
 
-	float2 GetCoords();
+	Vector2(): x(0.0f), y(0.0f) {}
+	Vector2(float x, float y): x(x), y(y) {}
+
 	void WriteCoordsToConsole();
 };
