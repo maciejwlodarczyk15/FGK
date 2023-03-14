@@ -73,3 +73,12 @@ void Vector2::WriteCoordsToConsole()
 {
 	std::cout << "(x: " << x << ", y: " << y << ")";
 }
+
+/*
+		VECTOR4
+*/
+
+void Vector4::WriteCoordsToConsole()
+{
+	std::cout << "(x: " << x << ", y: " << y << ", z: " <<  z  << ", w: " << w << ")";
+}

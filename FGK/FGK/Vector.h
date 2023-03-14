@@ -50,3 +50,27 @@ public:
 
 	void WriteCoordsToConsole();
 };
+
+/*
+		VECTOR4
+*/
+
+class Vector4
+{
+public:
+	float x, y, z, w;
+	
+	Vector4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
+	Vector4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
+
+	void WriteCoordsToConsole();
+
+	Vector4 operator*(float o) 
+	{
+		return Vector4(x * o, y * o, z * o, w * o);
+	}
+	Vector4 operator+(Vector4 v2)
+	{
+		return Vector4(x + v2.x, y + v2.y, z + v2.z, w + v2.w);
+	}
+};
