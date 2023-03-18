@@ -5,8 +5,13 @@ class Image
 {
 private:
 	int width, height;
+	Intensity *pixels;
 
 public:
 	Image(int w, int h);
+	~Image();
+
+	void SetPixel(int x, int y, Intensity intensity);
+	void DrawOnWindow();
 };
 

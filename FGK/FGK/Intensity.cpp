@@ -7,9 +7,38 @@ Intensity::Intensity()
 	b = 0.0f;
 }
 
-Intensity::Intensity(float r1, float g1, float b1)
+Intensity::Intensity(float r, float g, float b)
 {
-	r = r1;
-	g = g1;
-	b = b1;
+	this->r = r;
+	this->g = g;
+	this->b = b;
+}
+
+Intensity::Intensity(float r, float g)
+{
+	this->r = r;
+	this->g = g;
+	b = 0.0f;
+}
+
+Intensity::Intensity(float r)
+{
+	this->r = r;
+	g = 0.0f;
+	b = 0.0f;
+}
+
+float Intensity::GetRed()
+{
+	return r;
+}
+
+float Intensity::GetGreen()
+{
+	return g;
+}
+
+float Intensity::GetBlue()
+{
+	return b;
 }

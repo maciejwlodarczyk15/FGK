@@ -1,10 +1,17 @@
 #pragma once
 class Intensity
 {
-public:
+protected:
 	float r, g, b;
 
+public:
 	Intensity();
-	Intensity(float r1, float g1, float b1);
+	Intensity(float r, float g, float b);
+	Intensity(float r, float g);
+	Intensity(float r);
+
+	float GetRed();
+	float GetGreen();
+	float GetBlue();
 };
 
