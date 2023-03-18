@@ -14,6 +14,7 @@ public:
 	void SetPixel(int x, int y, Intensity intensity);
 	void FillImage(Intensity intensity);
 	void DrawOnWindow();
-
+	int GetWidth();
+	int GetHeight();
 };
 

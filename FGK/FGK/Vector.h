@@ -1,5 +1,4 @@
 #pragma once
-#include "NTypes.h"
 
 class Vector3
 {
@@ -40,6 +39,8 @@ public:
 	}
 };
 
+
+
 class Vector2
 {
 public:
@@ -51,9 +52,7 @@ public:
 	void WriteCoordsToConsole();
 };
 
-/*
-		VECTOR4
-*/
+
 
 class Vector4
 {

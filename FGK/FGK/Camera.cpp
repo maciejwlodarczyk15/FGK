@@ -1,60 +1,39 @@
 #include "Camera.h"
-#include <cmath>
-#define M_PI 3.14159265358979323846
+#include "Ray.h"
+#include "Sphere.h"
+#include <iostream>
 
-Camera::Camera(Vector3 pos, Vector3 target, Vector3 vecUp, float fov1, float ratio, float nClip, float fClip, bool isOrtho)
+Camera::Camera(int screenWidth, int screenHeight)
 {
-    position = pos;
-    lookAt = target;
-    up = vecUp;
-    fov = fov1;
-    aspectRatio = ratio;
-    nearClip = nClip;
-    farClip = fClip;
-    this->isOrtho = isOrtho;
+	this->screenWidth = screenWidth;
+	this->screenHeight = screenHeight;
 }
 
-Matrix4x4 Camera::GetViewMatrix()
+void Camera::Render(Image img, Intensity objectColor, Intensity bgColor)
 {
-    Vector3 zAxis = (lookAt - position).Normalize();
-    Vector3 xAxis = up.Cross(zAxis).Normalize();
-    Vector3 yAxis = zAxis.Cross(xAxis);
-    
-    Matrix4x4 result;
-    result.Indentity();
-    result(0, 0) = xAxis.x;
-    result(0, 1) = xAxis.y;
-    result(0, 2) = xAxis.z;
-    result(0, 3) = -xAxis.Dot(position);
-    result(1, 0) = yAxis.x;
-    result(1, 1) = yAxis.y;
-    result(1, 2) = yAxis.z;
-    result(1, 3) = -yAxis.Dot(position);
-    result(2, 0) = zAxis.x;
-    result(2, 1) = zAxis.y;
-    result(2, 2) = zAxis.z;
-    result(2, 3) = zAxis.Dot(position);
+	float pixelWidth = 2.0f / screenHeight;
+	float pixelHeight = 2.0f / screenWidth;
+	
+	for (int i = 0; i < img.GetWidth(); i++)
+	{
+		for (int j = 0; j < img.GetHeight(); j++)
+		{
+			float centerX = -1.0f + (i + 0.5f) * pixelWidth;
+			float centerY = 1.0f - (j + 0.5f) * pixelHeight;
 
-    return result;
-}
+			Vector3 contactPoint({0.0f, 0.0f, 0.0f});
+			Ray ray({ centerX, centerY, 0.0f}, {0.0f, 0.0f, 1.0f});
+			Sphere s(5.0f, {0.0f, 0.0f, 10.0f});
 
-Matrix4x4 Camera::GetProjectionMatrix()
-{
-    Matrix4x4 result;
-    result.Indentity();
-
-    if (isOrtho)
-    {
-
-    }
-    else
-    {
-        float f = 1.0f / tan(fov * 0.5f * (float)M_PI / 180.0f);
-        result(0, 0) = f / aspectRatio;
-        result(1, 1) = f;
-        result(2, 2) = (farClip + nearClip) / (nearClip - farClip);
-        result(2, 3) = -1.0f;
-        result(3, 2) = (2 * farClip * nearClip) / (nearClip - farClip);
-    }
-    return result;
+			if (ray.intersectsSphere(s, contactPoint))
+			{
+				img.SetPixel(i, j, objectColor);
+			}
+			else
+			{
+				img.SetPixel(i, j, bgColor);
+			}
+		}
+	}
+	img.DrawOnWindow();
 }

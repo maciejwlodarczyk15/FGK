@@ -46,3 +46,13 @@ void Image::DrawOnWindow()
     cv::imshow("Image", img);
     cv::waitKey(0);
 }
+
+int Image::GetWidth()
+{
+    return width;
+}
+
+int Image::GetHeight()
+{
+    return height;
+}
