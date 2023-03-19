@@ -1,6 +1,11 @@
 #include "Image.h"
 #include <opencv2/opencv.hpp>
 
+Image::Image()
+{
+    SetSize(800, 600);
+}
+
 Image::Image(int w, int h)
 {
     SetSize(w, h);

@@ -1,15 +1,20 @@
 #pragma once
 
 #include "Image.h"
+#include "Vector.h"
 
-class Camera
-{
+class Camera {
 private:
-	int screenWidth;
-	int screenHeight;
+    Vector3 cameraPosition;
+    Image img;
+    int screenWidth;
+    int screenHeight;
+    float aspectRatio;
+    float fov;
 
 public:
-	Camera(int screenWidth, int screenHeight);
-	void Render(Image img, Intensity objectColor, Intensity bgColor);
+    Camera(Vector3 camPos, float fovDegree, Image img);
+
+    void Render(Intensity objectColor);
 };
 

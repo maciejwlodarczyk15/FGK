@@ -5,16 +5,16 @@
 
 int main()
 {
-    int width = 1280;
-    int height = 720;
+    int screenWidth = 1280;
+    int screenHeight = 720;
 
-    Image img(width, height);
-    Intensity turqoise(0.0f, 1.0f, 1.0f);
-    Intensity red(1.0f, 0.0f, 0.0f);
+    Image img(screenWidth, screenHeight);
 
-    Camera cam(width, height);
-    
-    cam.Render(img, turqoise, red);
+    Vector3 camPos(0.0f, 0.0f, 0.0f);
+    Camera camera(camPos, 60.0, img);
+
+    Intensity objectColor(1.0f, 0.0f, 0.0f);
+    camera.Render(objectColor);
 
     return 0;
 }

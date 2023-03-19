@@ -10,6 +10,7 @@ private:
 	Intensity *pixels;
 
 public:
+	Image();
 	Image(int w, int h);
 
 	void SetSize(int w, int h);
