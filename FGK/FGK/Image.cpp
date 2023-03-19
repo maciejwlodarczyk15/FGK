@@ -3,27 +3,28 @@
 
 Image::Image(int w, int h)
 {
-	width = w;
-	height = h;
-	pixels = new Intensity[width * height];
+    SetSize(w, h);
 }
 
-Image::~Image()
+void Image::SetSize(int w, int h)
 {
-	delete[] pixels;
+    width = w;
+    height = h;
+    size = w * h;
+    pixels = new Intensity[size];
 }
 
 void Image::SetPixel(int x, int y, Intensity intensity)
 {
-	int index = y * width + x;
-	pixels[index] = intensity;
+    int index = y * width + x;
+    pixels[index] = intensity;
 }
 
 void Image::FillImage(Intensity intensity)
 {
-    for (int y = 0; y < height; y++) 
+    for (int x = 0; x < width; x++)
     {
-        for (int x = 0; x < width; x++)
+        for (int y = 0; y < height; y++)
         {
             SetPixel(x, y, intensity);
         }
