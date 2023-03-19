@@ -11,29 +11,24 @@ Camera::Camera(int screenWidth, int screenHeight)
 
 void Camera::Render(Image img, Intensity objectColor, Intensity bgColor)
 {
-	float pixelWidth = 2.0f / screenHeight;
-	float pixelHeight = 2.0f / screenWidth;
-	
-	for (int i = 0; i < img.GetWidth(); i++)
+	for (int x = 0; x < screenWidth; x++)
 	{
-		for (int j = 0; j < img.GetHeight(); j++)
+		for (int y = 0; y < screenHeight; y++)
 		{
-			float centerX = -1.0f + (i + 0.5f) * pixelWidth;
-			float centerY = 1.0f - (j + 0.5f) * pixelHeight;
+			float px = (x - screenWidth / 2.0f) / screenWidth;
+			float py = -(y - screenHeight / 2.0f) / screenHeight;
+			Vector3 rayDir(px, py, 1.0f);
+			rayDir.Normalize();
+			Ray ray(Vector3(0.0f, 0.0f, 0.0f), rayDir);
 
-			Vector3 contactPoint({0.0f, 0.0f, 0.0f});
-			Ray ray({ centerX, centerY, 0.0f}, {0.0f, 0.0f, 1.0f});
-			Sphere s(5.0f, {0.0f, 0.0f, 10.0f});
-
+			Sphere s(1.0f, { 0.0f, 0.0f, 10.0f });
+			Vector3 contactPoint({ 0.0f, 0.0f, 0.0f });
 			if (ray.intersectsSphere(s, contactPoint))
 			{
-				img.SetPixel(i, j, objectColor);
-			}
-			else
-			{
-				img.SetPixel(i, j, bgColor);
+				img.SetPixel(x, y, objectColor);
 			}
 		}
 	}
+
 	img.DrawOnWindow();
 }

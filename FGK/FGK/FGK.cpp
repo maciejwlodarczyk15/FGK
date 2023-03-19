@@ -12,14 +12,9 @@ int main()
     Intensity turqoise(0.0f, 1.0f, 1.0f);
     Intensity red(1.0f, 0.0f, 0.0f);
 
-	img.FillImage(turqoise);
-    img.DrawOnWindow();
-
     Camera cam(width, height);
     
     cam.Render(img, turqoise, red);
-
-   
 
     return 0;
 }
