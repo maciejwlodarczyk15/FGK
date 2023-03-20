@@ -37,6 +37,12 @@ public:
 		Vector3 newVector({ x * number, y * number,z * number });
 		return newVector;
 	}
+
+	Vector3 operator/(float number)
+	{
+		Vector3 newVector({ x / number, y / number, z / number });
+		return newVector;
+	}
 };
 
 

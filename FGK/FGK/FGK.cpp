@@ -11,7 +11,14 @@ int main()
     Image img(screenWidth, screenHeight);
 
     Vector3 camPos(0.0f, 0.0f, 0.0f);
-    Camera camera(camPos, 60.0, img);
+    Vector3 camTarget(0.0f, 0.0f, -5.0f);
+    Vector3 camUp(0.0f, 1.0f, 0.0f);
+    float fov = 60.0f;
+    float nearPlane = 0.1f;
+    float farPlane = 100.0f;
+
+    Camera camera(camPos, camTarget, camUp,
+        fov, farPlane, farPlane, img, true);
 
     Intensity objectColor(1.0f, 0.0f, 0.0f);
     camera.Render(objectColor);
