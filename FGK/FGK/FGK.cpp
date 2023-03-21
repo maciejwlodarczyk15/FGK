@@ -21,7 +21,8 @@ int main()
         fov, farPlane, farPlane, img, true);
 
     Intensity objectColor(1.0f, 0.0f, 0.0f);
-    camera.Render(objectColor);
+    Intensity backgroundColor(0.0f, 0.0f, 0.0f);
+    camera.Render(objectColor, backgroundColor, 0);
 
     return 0;
 }

@@ -18,9 +18,8 @@ private:
     bool isOrtographic;
 
 public:
-    //Camera(Vector3 camPos, float fovDegree, Image img);
     Camera(Vector3 camPos, Vector3 camTarget,  Vector3 camUp, float fovDegree, float nPlane, float fPlane, Image img, bool isOrtographic);
 
-    void Render(Intensity objectColor);
+    void Render(Intensity objectColor, Intensity backgroundColor, int depth);
 };
 
