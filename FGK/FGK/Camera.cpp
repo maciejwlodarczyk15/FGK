@@ -1,12 +1,12 @@
 #include "Camera.h"
 #include "Ray.h"
-#include "Sphere.h"
 #include <iostream>
 #include <vector>
 
 #define M_PI 3.14159265358979323846
 
-Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree, float nPlane, float fPlane, Image img, bool isOrtographic)
+Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree, float nPlane, float fPlane, 
+    Image img, Intensity objectColor, Intensity backgroundColor, std::vector<Sphere> spheres, bool isOrtographic)
 {
     cameraPosition = camPos;
     cameraTarget = camTarget;
@@ -21,18 +21,27 @@ Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree
     nearPlane = nPlane;
     farPlane = fPlane;
     this->isOrtographic = isOrtographic;
+
+    this->objectColor = objectColor;
+    this->backgroundColor = backgroundColor;
+    this->spheres = spheres;
 }
 
-void Camera::Render(Intensity objectColor, Intensity backgroundColor, int depth)
+void Camera::Render(int depth)
 {
     Sphere s(1.0f, Vector3(0.0f, 0.0f, -5.0f));
     Intensity zero;
-
+    
+    int currentDepth = 0;
     int maxDepth = 4;
+
+    bool drawColor = false;
+
     for (int x = 0; x < screenWidth; x++)
     {
         for (int y = 0; y < screenHeight; y++)
         {
+
             std::vector<Intensity> allColors;
 
             for (int i = 0; i < 4; i++)
@@ -61,7 +70,14 @@ void Camera::Render(Intensity objectColor, Intensity backgroundColor, int depth)
 
                 // Check whether to draw object or background
                 Vector3 contactPoint;
-                if (ray.intersectsSphere(s, contactPoint))
+                for (int i = 0; i < spheres.size(); i++)
+                {
+                    if (ray.intersectsSphere(spheres[i], contactPoint))
+                    {
+                        drawColor = true;
+                    }
+                }
+                if (drawColor)
                 {
                     allColors.push_back(objectColor);
                 }
@@ -69,6 +85,7 @@ void Camera::Render(Intensity objectColor, Intensity backgroundColor, int depth)
                 {
                     allColors.push_back(backgroundColor);
                 }
+                drawColor = false;
             }
 
             // Average color of all the pixels

@@ -2,6 +2,8 @@
 
 #include "Image.h"
 #include "Vector.h"
+#include "Sphere.h"
+#include <vector>
 
 class Camera {
 private:
@@ -16,10 +18,15 @@ private:
     float nearPlane;
     float farPlane;
     bool isOrtographic;
+    Intensity objectColor; 
+    Intensity backgroundColor;
+    std::vector<Sphere> spheres;
+
 
 public:
-    Camera(Vector3 camPos, Vector3 camTarget,  Vector3 camUp, float fovDegree, float nPlane, float fPlane, Image img, bool isOrtographic);
+    Camera(Vector3 camPos, Vector3 camTarget,  Vector3 camUp, float fovDegree, float nPlane, float fPlane, 
+        Image img, Intensity objectColor, Intensity backgroundColor, std::vector<Sphere> spheres, bool isOrtographic);
 
-    void Render(Intensity objectColor, Intensity backgroundColor, int depth);
+    void Render(int depth);
 };
 

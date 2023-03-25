@@ -17,12 +17,16 @@ int main()
     float nearPlane = 0.1f;
     float farPlane = 100.0f;
 
-    Camera camera(camPos, camTarget, camUp,
-        fov, farPlane, farPlane, img, true);
-
     Intensity objectColor(1.0f, 0.0f, 0.0f);
     Intensity backgroundColor(0.0f, 0.0f, 0.0f);
-    camera.Render(objectColor, backgroundColor, 0);
+
+    std::vector<Sphere> spheres;
+    spheres.push_back(Sphere(1.0f, Vector3(0.0f, 0.0f, -5.0f)));
+
+    Camera camera(camPos, camTarget, camUp, fov, farPlane, farPlane, 
+        img, objectColor, backgroundColor, spheres, true);
+
+    camera.Render(0);
 
     return 0;
 }
