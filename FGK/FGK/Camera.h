@@ -13,6 +13,7 @@ private:
     Image img;
     int screenWidth;
     int screenHeight;
+    int maxDepth;
     float aspectRatio;
     float fov;
     float nearPlane;
@@ -24,9 +25,12 @@ private:
 
 
 public:
-    Camera(Vector3 camPos, Vector3 camTarget,  Vector3 camUp, float fovDegree, float nPlane, float fPlane, 
+    Camera(Vector3 camPos, Vector3 camTarget,  Vector3 camUp, float fovDegree, float nPlane, float fPlane, int maxDepth,
         Image img, Intensity objectColor, Intensity backgroundColor, std::vector<Sphere> spheres, bool isOrtographic);
 
-    void Render(int depth);
+    void Render();
+
+    Intensity PixelDivider(int x, int y, int depth, int maxDepth);
+    Intensity QbDivider(float p1x, float p1y, float p2x, float p2y, int depth);
 };
 

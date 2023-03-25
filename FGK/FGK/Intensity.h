@@ -28,7 +28,7 @@ public:
 	}
 	bool operator !=(Intensity o)
 	{
-		if (r == o.GetRed(), g == o.GetGreen(), b == o.GetBlue())
+		if (r == o.GetRed() && g == o.GetGreen() && b == o.GetBlue())
 		{
 			return false;
 		}

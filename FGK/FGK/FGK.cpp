@@ -2,9 +2,16 @@
 
 #include "Image.h"
 #include "Camera.h"
+#include "Mesh.h"
 
 int main()
 {
+    //Mesh newMesh("stozek.obj");
+    //newMesh.GetVertices();
+    //newMesh.GetNormals();
+    //newMesh.GetTexcoords();
+    //newMesh.GetFaces();
+
     int screenWidth = 1280;
     int screenHeight = 720;
 
@@ -16,6 +23,7 @@ int main()
     float fov = 60.0f;
     float nearPlane = 0.1f;
     float farPlane = 100.0f;
+    int maxDepth = 0;
 
     Intensity objectColor(1.0f, 0.0f, 0.0f);
     Intensity backgroundColor(0.0f, 0.0f, 0.0f);
@@ -23,10 +31,10 @@ int main()
     std::vector<Sphere> spheres;
     spheres.push_back(Sphere(1.0f, Vector3(0.0f, 0.0f, -5.0f)));
 
-    Camera camera(camPos, camTarget, camUp, fov, farPlane, farPlane, 
-        img, objectColor, backgroundColor, spheres, true);
+    Camera camera(camPos, camTarget, camUp, fov, farPlane, farPlane, maxDepth,
+        img, objectColor, backgroundColor, spheres, false);
 
-    camera.Render(0);
+    camera.Render();
 
     return 0;
 }
