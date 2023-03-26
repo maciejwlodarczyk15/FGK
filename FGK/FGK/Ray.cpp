@@ -1,6 +1,9 @@
 #include "Ray.h"
 #include <iostream>
 
+#define PLUS_ZERO 0.00001
+#define MINUS_ZERO -0.0001
+
 Ray::Ray(Vector3 point, Vector3 direct)
 {
 	origin = point;
@@ -49,4 +52,49 @@ bool Ray::intersectPlane(Plane plane, Vector3& contactPoint)
     
     contactPoint = origin + direction * t;
     return true;
+}
+
+bool Ray::intersectTriangle(Triangle triangle, Vector3& contactPoint)
+{
+    Plane trianglePlane(triangle.GetVn(), triangle.GetV1());
+    if (!this->intersectPlane(trianglePlane, contactPoint))
+    {
+        return false;
+    }
+    else
+    {
+        Vector3 fa, fb, fc;
+        Vector3 x;
+
+        fa = triangle.GetV1() - contactPoint;
+        fb = triangle.GetV2() - contactPoint;
+        fc = triangle.GetV3() - contactPoint;
+
+        x = fa.Cross(fb);
+
+        if (x.Dot(triangle.GetVn()) < MINUS_ZERO)
+        {
+            return false;
+        }
+        else
+        {
+            x = fb.Cross(fc);
+
+            if (x.Dot(triangle.GetVn()) < MINUS_ZERO)
+            {
+                return false;
+            }
+
+            x = fc.Cross(fa);
+            
+            if (x.Dot(triangle.GetVn()) < MINUS_ZERO)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+    }
 }

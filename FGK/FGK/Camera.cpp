@@ -7,7 +7,7 @@
 #define M_PI 3.14159265358979323846
 
 Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree, float nPlane, float fPlane, int maxDepth,
-    Image img, Intensity objectColor, Intensity backgroundColor, std::vector<Sphere> spheres, bool isOrtographic)
+    Image img, Intensity objectColor, Intensity backgroundColor, std::vector<Sphere> spheres, std::vector<Mesh> meshes, bool isOrtographic)
 {
     cameraPosition = camPos;
     cameraTarget = camTarget;
@@ -27,6 +27,7 @@ Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree
     this->backgroundColor = backgroundColor;
     this->spheres = spheres;
     this->maxDepth = maxDepth;
+    this->meshes = meshes;
 }
 
 void Camera::Render()
@@ -156,6 +157,19 @@ Intensity Camera::QbDivider(float p1x, float p1y, float p2x, float p2y, int dept
             if (ray.intersectsSphere(spheres[i], contactPoint))
             {
                 drawColor = true;
+            }
+        }
+        std::vector<Mesh> newMeshes;
+        for (int i = 0; i < meshes.size(); i++)
+        {
+            //std::cout << "\nMeshes size: " << meshes.size();
+            for (int j = 0; j < meshes[i].GetTriangles().size(); j++)
+            {
+                //std::cout << "\nChecking triangle number: " << j;
+                if (ray.intersectTriangle(meshes[i].GetTriangles()[j], contactPoint))
+                {
+                    drawColor = true;
+                }
             }
         }
         if (drawColor)

@@ -2,6 +2,7 @@
 #include "Vector.h"
 #include "Sphere.h"
 #include "Plane.h"
+#include "Triangle.h"
 
 class Ray
 {
@@ -14,5 +15,6 @@ public:
 
 	bool intersectsSphere(Sphere sphere, Vector3& contactPoint);
 	bool intersectPlane(Plane plane, Vector3& contactPoint);
+	bool intersectTriangle(Triangle triangle, Vector3& contactPoint);
 };
 

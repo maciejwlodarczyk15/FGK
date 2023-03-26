@@ -42,6 +42,8 @@ Mesh::Mesh(const std::string& filename)
 			else if (type == "f")
 			{
 				Face face;
+				Face faceTex;
+				int normal_index;
 
 				while (iss >> type)
 				{
@@ -50,16 +52,42 @@ Mesh::Mesh(const std::string& filename)
 					std::getline(viss, vertex_token, '/');
 					int vertex_index = std::stoi(vertex_token) - 1;
 					face.vertexIndices.push_back(vertex_index);
+
+					std::string texCoord_token;
+					std::getline(viss, texCoord_token, '/');
+					int texCoord_index = std::stoi(texCoord_token) - 1;
+					faceTex.vertexIndices.push_back(texCoord_index);
+
+					std::string normal_token;
+					std::getline(viss, normal_token, '/');
+					normal_index = std::stoi(normal_token) - 1;
 				}
 
+				faceNormals.push_back(normal_index);
 				faces.push_back(face);
+				faceTexCoords.push_back(faceTex);
+
 			}
 		}
 	}
 	file.close();
+
+	for (int i = 0; i < faces.size(); i++)
+	{
+		Vector3 v1 = vertices[faces[i].vertexIndices[0]];
+		Vector3 v2 = vertices[faces[i].vertexIndices[1]];
+		Vector3 v3 = vertices[faces[i].vertexIndices[2]];
+		Vector3 vn = normals[faceNormals[i]];
+		triangles.push_back(Triangle(v1, v2, v3, vn));
+	}
 }
 
-void Mesh::GetVertices()
+std::vector<Triangle> Mesh::GetTriangles()
+{
+	return triangles;
+}
+
+void Mesh::WriteVertices()
 {
 	for (int i = 0; i < vertices.size(); i++)
 	{
@@ -68,7 +96,7 @@ void Mesh::GetVertices()
 	}
 }
 
-void Mesh::GetNormals()
+void Mesh::WriteNormals()
 {
 	for (int i = 0; i < normals.size(); i++)
 	{
@@ -77,7 +105,7 @@ void Mesh::GetNormals()
 	}
 }
 
-void Mesh::GetTexcoords()
+void Mesh::Texcoords()
 {
 	for (int i = 0; i < texcoords.size(); i++)
 	{
@@ -86,11 +114,36 @@ void Mesh::GetTexcoords()
 	}
 }
 
-void Mesh::GetFaces()
+void Mesh::WriteFaces()
 {
 	for (int i = 0; i < faces.size(); i++)
 	{
 		std::cout << "\nf: ";
 		faces[i].WriteCoordsToConsole();
+	}
+}
+
+void Mesh::WriteFaceNormals()
+{
+	for (int i = 0; i < faces.size(); i++)
+	{
+		std::cout << "\nfn: ";
+		std::cout << faceNormals[i];
+	}
+}
+
+void Mesh::WriteTriangles()
+{
+	for (int i = 0; i < triangles.size(); i++)
+	{
+		std::cout << "\nTriangle: v1: ";
+		triangles[i].GetV1().WriteCoordsToConsole();
+		std::cout << ", v2: ";
+		triangles[i].GetV2().WriteCoordsToConsole();
+		std::cout << ", v3: ";
+		triangles[i].GetV3().WriteCoordsToConsole();
+		std::cout << ", vn: ";
+		triangles[i].GetVn().WriteCoordsToConsole();
+		std::cout << "\n\n";
 	}
 }

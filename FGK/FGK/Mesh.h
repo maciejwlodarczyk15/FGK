@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector.h"
+#include "Triangle.h"
 #include <vector>
 #include <string>
 #include <iostream>
@@ -23,13 +24,20 @@ private:
 	std::vector<Vector3> normals;
 	std::vector<Vector2> texcoords;
 	std::vector<Face> faces;
+	std::vector<Face> faceTexCoords;
+	std::vector<int> faceNormals;
+	std::vector<Triangle> triangles;
 
 public:
 	Mesh(const std::string& filename);
 
-	void GetVertices();
-	void GetNormals();
-	void GetTexcoords();
-	void GetFaces();
+	std::vector<Triangle> GetTriangles();
+
+	void WriteVertices();
+	void WriteNormals();
+	void Texcoords();
+	void WriteFaces();
+	void WriteFaceNormals();
+	void WriteTriangles();
 };
 

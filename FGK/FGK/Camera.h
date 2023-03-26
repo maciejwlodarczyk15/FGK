@@ -3,6 +3,7 @@
 #include "Image.h"
 #include "Vector.h"
 #include "Sphere.h"
+#include "Mesh.h"
 #include <vector>
 
 class Camera {
@@ -22,11 +23,11 @@ private:
     Intensity objectColor; 
     Intensity backgroundColor;
     std::vector<Sphere> spheres;
-
+    std::vector<Mesh> meshes;
 
 public:
     Camera(Vector3 camPos, Vector3 camTarget,  Vector3 camUp, float fovDegree, float nPlane, float fPlane, int maxDepth,
-        Image img, Intensity objectColor, Intensity backgroundColor, std::vector<Sphere> spheres, bool isOrtographic);
+        Image img, Intensity objectColor, Intensity backgroundColor, std::vector<Sphere> spheres, std::vector<Mesh> meshes, bool isOrtographic);
 
     void Render();
 
