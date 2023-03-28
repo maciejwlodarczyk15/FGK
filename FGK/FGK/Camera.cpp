@@ -38,86 +38,17 @@ void Camera::Render()
     {
         for (int y = 0; y < screenHeight; y++)
         {
-            /*
-            std::vector<Intensity> allColors;
-
-            for (int i = 0; i < 4; i++)
-            {
-                float px = (2.0f * (x + (i % 2) * 0.5f) / screenWidth - 1.0f) * aspectRatio * tan(fov / 2.0f);
-                float py = (1.0f - 2.0f * (y + (i / 2) * 0.5f) / screenHeight) * tan(fov / 2.0f);
-
-                Vector3 rayDir(px, py, -1.0f);
-                rayDir.Normalize();
-
-                if (!isOrtographic)
-                {
-                    Vector3 cameraDir = (cameraTarget - cameraPosition).Normalize();
-                    Vector3 cameraVectorRight = cameraVecUp.Cross(cameraDir).Normalize();
-                    Vector3 cameraUpNew = cameraDir.Cross(cameraVectorRight).Normalize();
-                    rayDir = (cameraVectorRight * px + cameraUpNew * py + cameraDir / fov).Normalize();
-                }
-
-                Ray ray(cameraPosition, rayDir);
-
-                if (isOrtographic)
-                {
-                    Vector3 rayOrigin = cameraPosition + Vector3(1, 0, 0) * px + Vector3(0, 1, 0) * py;
-                    ray = Ray(rayOrigin, rayDir);
-                }
-
-                // Check whether to draw object or background
-                Vector3 contactPoint;
-                for (int i = 0; i < spheres.size(); i++)
-                {
-                    if (ray.intersectsSphere(spheres[i], contactPoint))
-                    {
-                        drawColor = true;
-                    }
-                }
-                if (drawColor)
-                {
-                    allColors.push_back(objectColor);
-                }
-                else
-                {
-                    allColors.push_back(backgroundColor);
-                }
-                drawColor = false;
-            }
-
-            // Average color of all the pixels
-            Intensity averageColor;
-            for (int i = 0; i < allColors.size(); i++)
-            {
-                averageColor = averageColor + allColors[i];
-            }
-
-            averageColor = averageColor / allColors.size();
-
-            for (int i = 1; i < allColors.size(); i++)
-            {
-                if (allColors[0] - allColors[i] != zero)
-                {
-
-                    // DO RECURSIVE PIXEL DIVISION
-                }
-                else
-                {
-                    img.SetPixel(x, y, averageColor);
-                }
-            }*/
             float p1x = 2.0f * x / screenWidth - 1.0f;
             float p1y = 1.0f - 2.0f * y / screenHeight;
             float p2x = 2.0f * (x + 0.5f) / screenWidth - 1.0f;
             float p2y = 1.0f - 2.0f * (y + 0.5f) / screenHeight;
-            img.SetPixel(x, y, QbDivider(p1x, p1y, p2x, p2y, currentDepth));
+            img.SetPixel(x, y, PixelDivider(p1x, p1y, p2x, p2y, currentDepth));
         }
     }
     img.DrawOnWindow();
 }
 
-// Qb's experiments
-Intensity Camera::QbDivider(float p1x, float p1y, float p2x, float p2y, int depth) {
+Intensity Camera::PixelDivider(float p1x, float p1y, float p2x, float p2y, int depth) {
     Intensity zero;
 
     std::vector<Intensity> allColors;
@@ -162,10 +93,8 @@ Intensity Camera::QbDivider(float p1x, float p1y, float p2x, float p2y, int dept
         std::vector<Mesh> newMeshes;
         for (int i = 0; i < meshes.size(); i++)
         {
-            //std::cout << "\nMeshes size: " << meshes.size();
             for (int j = 0; j < meshes[i].GetTriangles().size(); j++)
             {
-                //std::cout << "\nChecking triangle number: " << j;
                 if (ray.intersectTriangle(meshes[i].GetTriangles()[j], contactPoint))
                 {
                     drawColor = true;
@@ -190,8 +119,7 @@ Intensity Camera::QbDivider(float p1x, float p1y, float p2x, float p2y, int dept
     {
         if (allColors[0] - allColors[i] != zero && depth < maxDepth)
         {
-            // DO RECURSIVE PIXEL DIVISION
-            averageColor = averageColor + QbDivider(pointsX[0], pointsY[0], pointsX[i], pointsY[i], depth + 1);
+            averageColor = averageColor + PixelDivider(pointsX[0], pointsY[0], pointsX[i], pointsY[i], depth + 1);
         }
         else
         {

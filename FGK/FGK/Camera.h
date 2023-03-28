@@ -31,7 +31,6 @@ public:
 
     void Render();
 
-    Intensity PixelDivider(int x, int y, int depth, int maxDepth);
-    Intensity QbDivider(float p1x, float p1y, float p2x, float p2y, int depth);
+    Intensity PixelDivider(float p1x, float p1y, float p2x, float p2y, int depth);
 };
 
