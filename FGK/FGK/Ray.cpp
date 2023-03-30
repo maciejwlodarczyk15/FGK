@@ -10,6 +10,11 @@ Ray::Ray(Vector3 point, Vector3 direct)
 	direction = direct;
 }
 
+Vector3 Ray::GetDirection()
+{
+    return direction;
+}
+
 bool Ray::intersectsSphere(Sphere sphere, Vector3& contactPoint)
 {
 	Vector3 oc = origin - sphere.GetCenter();

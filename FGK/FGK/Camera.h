@@ -4,6 +4,7 @@
 #include "Vector.h"
 #include "Sphere.h"
 #include "Mesh.h"
+#include "PointLight.h"
 #include <vector>
 
 class Camera {
@@ -24,10 +25,12 @@ private:
     Intensity backgroundColor;
     std::vector<Sphere> spheres;
     std::vector<Mesh> meshes;
+    PointLight pLight;
 
 public:
     Camera(Vector3 camPos, Vector3 camTarget,  Vector3 camUp, float fovDegree, float nPlane, float fPlane, int maxDepth,
-        Image img, Intensity objectColor, Intensity backgroundColor, std::vector<Sphere> spheres, std::vector<Mesh> meshes, bool isOrtographic);
+        Image img, Intensity objectColor, Intensity backgroundColor, 
+        std::vector<Sphere> spheres, std::vector<Mesh> meshes, PointLight pLight, bool isOrtographic);
 
     void Render();
 

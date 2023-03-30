@@ -1,4 +1,5 @@
 #include "Intensity.h"
+#include <iostream>
 
 Intensity::Intensity()
 {
@@ -41,4 +42,9 @@ float Intensity::GetGreen()
 float Intensity::GetBlue()
 {
 	return b;
+}
+
+void Intensity::WriteToConsole()
+{
+	std::cout << "(r: " << r << ", g: " << g << ", b: " << b << ")";
 }

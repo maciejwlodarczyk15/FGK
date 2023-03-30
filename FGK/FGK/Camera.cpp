@@ -7,7 +7,8 @@
 #define M_PI 3.14159265358979323846
 
 Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree, float nPlane, float fPlane, int maxDepth,
-    Image img, Intensity objectColor, Intensity backgroundColor, std::vector<Sphere> spheres, std::vector<Mesh> meshes, bool isOrtographic)
+    Image img, Intensity objectColor, Intensity backgroundColor, 
+    std::vector<Sphere> spheres, std::vector<Mesh> meshes, PointLight pLight, bool isOrtographic)
 {
     cameraPosition = camPos;
     cameraTarget = camTarget;
@@ -28,6 +29,7 @@ Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree
     this->spheres = spheres;
     this->maxDepth = maxDepth;
     this->meshes = meshes;
+    this->pLight = pLight;
 }
 
 void Camera::Render()
@@ -48,15 +50,14 @@ void Camera::Render()
     img.DrawOnWindow();
 }
 
-Intensity Camera::PixelDivider(float p1x, float p1y, float p2x, float p2y, int depth) {
+Intensity Camera::PixelDivider(float p1x, float p1y, float p2x, float p2y, int depth) 
+{
     Intensity zero;
 
     std::vector<Intensity> allColors;
     
     std::vector<float> pointsX = { (p1x + p2x) / 2, std::min(p1x, p2x), std::max(p1x, p2x), std::min(p1x, p2x), std::max(p1x, p2x) };
     std::vector<float> pointsY = { (p1y + p2y) / 2, std::min(p1y, p2y), std::min(p1y, p2y), std::max(p1y, p2y), std::max(p1y, p2y) };
-
-    bool drawColor = false;
 
     for (int i = 0; i < 5; i++) {
         float px = pointsX.at(i) * aspectRatio * tan(fov / 2.0f);
@@ -83,27 +84,61 @@ Intensity Camera::PixelDivider(float p1x, float p1y, float p2x, float p2y, int d
 
         // Check whether to draw object or background
         Vector3 contactPoint;
+        bool drawColor = false;
         for (int i = 0; i < spheres.size(); i++)
         {
             if (ray.intersectsSphere(spheres[i], contactPoint))
             {
                 drawColor = true;
+                break;
             }
-        }
+        } 
         std::vector<Mesh> newMeshes;
-        for (int i = 0; i < meshes.size(); i++)
+        for (int k = 0; k < meshes.size(); k++)
         {
-            for (int j = 0; j < meshes[i].GetTriangles().size(); j++)
+            for (int j = 0; j < meshes[k].GetTriangles().size(); j++)
             {
-                if (ray.intersectTriangle(meshes[i].GetTriangles()[j], contactPoint))
+                if (ray.intersectTriangle(meshes[k].GetTriangles()[j], contactPoint))
                 {
                     drawColor = true;
+                    break;
                 }
             }
+            if (drawColor) 
+            {
+                break;
+            }   
         }
         if (drawColor)
         {
-            allColors.push_back(objectColor);
+
+
+            //float r, g, b, cosinus;
+            //
+            //Vector3 I = ray.GetDirection().Normalize();
+            //Vector3 N = ;
+
+            //// Light 
+            Vector3 intersectionToLight = (pLight.GetPosition() - contactPoint).Normalize();
+            // Calculate length from light to contact point
+            float distanceToLight = (pLight.GetPosition() - contactPoint).Length();
+            float attenuation = 1.0f / (pLight.GetConstant() + pLight.GetLinear() * distanceToLight + pLight.GetQuadratic() * distanceToLight * distanceToLight);
+            Intensity lightColor = pLight.GetColor() * pLight.GetIntensity() * attenuation;
+            
+            Intensity resultColor = objectColor * lightColor;
+
+
+            //allColors.push_back(objectColor * lightColor);'
+            // 
+            //std::cout << "\nC: ";
+            //objectColor.WriteToConsole();
+            //std::cout << "\nL: ";
+            //lightColor.WriteToConsole();
+            //std::cout << "\nCL: ";
+            //resultColor.WriteToConsole();
+
+            //allColors.push_back(objectColor);
+            allColors.push_back(resultColor);
         }
         else
         {
