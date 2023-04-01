@@ -37,5 +37,7 @@ public:
     Intensity PixelDivider(float p1x, float p1y, float p2x, float p2y, int depth);
 
     Intensity Phong(int pixelX, int pixelY);
+
+    Intensity Phong(float pixelX, float pixelY);
 };
 
