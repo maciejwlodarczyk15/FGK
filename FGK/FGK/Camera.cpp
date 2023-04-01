@@ -1,4 +1,4 @@
-#include "Camera.h"
+﻿#include "Camera.h"
 #include "Ray.h"
 #include <iostream>
 #include <vector>
@@ -32,12 +32,122 @@ Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree
     this->pLight = pLight;
 }
 
+//Intensity Camera::Phong(int pixelX, int pixelY)
+//{
+//    float p1x = 2.0f * pixelX / screenWidth - 1.0f;
+//    float p1y = 1.0f - 2.0f * pixelY / screenHeight;
+//    float p2x = 2.0f * (pixelX + 0.5f) / screenWidth - 1.0f;
+//    float p2y = 1.0f - 2.0f * (pixelY + 0.5f) / screenHeight;
+//    //float px = -1.8f + (pixelX + 0.5f) * screenWidth;
+//    //float py = 1.0f - (pixelY + 0.5f) * screenHeight;
+//    //float px = pixelX * aspectRatio * tan(fov / 2.0f);
+//    //float py = pixelY * tan(fov / 2.0f);
+//    float px = (2.0f * (pixelX + 0.5f) / screenWidth - 1.0f) * aspectRatio * tan(fov / 2.0f);
+//    float py = (1.0f - 2.0f * (pixelY + 0.5f) / screenHeight) * tan(fov / 2.0f);
+//    Vector3 rayDir(px, py, -1.0f);
+//    rayDir.Normalize();
+//
+//    if (!isOrtographic)
+//    {
+//        Vector3 cameraDir = (cameraTarget - cameraPosition).Normalize();
+//        Vector3 cameraVectorRight = cameraVecUp.Cross(cameraDir).Normalize();
+//        Vector3 cameraUpNew = cameraDir.Cross(cameraVectorRight).Normalize();
+//        rayDir = (cameraVectorRight * px + cameraUpNew * py + cameraDir / fov).Normalize();
+//    }
+//
+//    Ray ray(cameraPosition, rayDir);
+//    if (isOrtographic)
+//    {
+//        Vector3 rayOrigin = cameraPosition + Vector3(1, 0, 0) * px + Vector3(0, 1, 0) * py;
+//        ray = Ray(rayOrigin, rayDir);
+//    }
+//
+//    Sphere hitSphere;
+// 
+//    // Check whether to draw object or background
+//    Vector3 contactPoint;
+//    bool drawColor = false;
+//    //ray.intersectsSphere(spheres[0], contactPoint);
+//    //std::cout << "\n";
+//    //contactPoint.WriteCoordsToConsole();
+//    for (int i = 0; i < spheres.size(); i++)
+//    {
+//        if (ray.intersectsSphere(spheres[i], contactPoint))
+//        {
+//            drawColor = true;
+//            hitSphere = spheres[i];
+//            break;
+//        }
+//    }
+//    if (drawColor)
+//    {
+//        float specular = 0.5f;         // kolor światła zwierciadlanego
+//        float specularCoef = 0.7f;     // współczynnik odbicia zwierciadlanego
+//        float a = 32.0f;               // wykładnik połysku
+//
+//
+//        Ray checkBlock(contactPoint, pLight.GetPosition());
+//        Vector3 blockContactPoint;
+//        bool isBlocked = false;
+//        for (int i = 0; i < spheres.size(); i++)
+//        {
+//            if (checkBlock.intersectsSphere(spheres[i], blockContactPoint))
+//            {
+//                float distanceObjectLight = (pLight.GetPosition() - contactPoint).Length();
+//                float distanceObjectBlock = (blockContactPoint - contactPoint).Length();
+//                if (distanceObjectLight >= distanceObjectBlock)
+//                {
+//                    isBlocked = true;
+//                }
+//            }
+//        }
+//
+//        if (!isBlocked) {}
+//
+//
+//        Vector3 N = hitSphere.GetNormal(contactPoint);
+//        Vector3 L = ray.GetDirection().Normalize();
+//        Vector3 R = L - N * L.Dot(N) * 2;
+//        Vector3 V = (cameraTarget - cameraPosition).Normalize();
+//
+//        float ka = 1.0f;                                   // współczynnik oświetlenia otoczenia
+//        float kd = std::max(N.Dot(L), 0.0f);               // współczynnik odbicia dyfuzyjnego
+//        float ks = std::pow(std::max(R.Dot(V), 0.0f), a);  // współczynnik odbicia zwierciadlanego
+//
+//        Intensity I = Intensity(0.0f, 0.0f, 0.0f) * ka + Intensity(0.5f, 0.5f, 0.5f) * kd + Intensity(1.0f, 1.0f, 1.0f) * ks;
+//        return objectColor * I;
+//
+//        /*
+//        Vector3 I = ray.GetDirection().Normalize();
+//        Vector3 N = hitSphere.GetNormal(contactPoint);
+//        Vector3 R = I - (N * N.Dot(I) * 2.0f);
+//        
+//        float ss = ray.GetDirection().Normalize().Dot(R);
+//        //std::cout << ss << "\n";
+//        if (ss > 0)
+//        {
+//            specular = std::pow(ss, a);
+//        }
+//        else
+//        {
+//            specular = 0;
+//        }
+//        specular *= specularCoef;
+//        Intensity sIntensity = pLight.GetIntensity() * specular;
+//        cosinus = (ray.GetDirection() * -1).Normalize().Dot(hitSphere.GetNormal(contactPoint));
+//        Intensity lightIntensity = pLight.GetIntensity();
+//        r = lightIntensity.GetRed() * k * cosinus; 
+//        g = lightIntensity.GetGreen() * k * cosinus;
+//        b = lightIntensity.GetBlue() * k * cosinus;
+//        Intensity diffuseIntensity = Intensity(r, g, b) + backgroundColor;
+//        return sIntensity + diffuseIntensity;
+//        */
+//    }
+//    else
+//        return backgroundColor;
+//}
 Intensity Camera::Phong(int pixelX, int pixelY)
 {
-    //float px = -1.8f + (pixelX + 0.5f) * screenWidth;
-    //float py = 1.0f - (pixelY + 0.5f) * screenHeight;
-    //float px = pixelX * aspectRatio * tan(fov / 2.0f);
-    //float py = pixelY * tan(fov / 2.0f);
     float px = (2.0f * (pixelX + 0.5f) / screenWidth - 1.0f) * aspectRatio * tan(fov / 2.0f);
     float py = (1.0f - 2.0f * (pixelY + 0.5f) / screenHeight) * tan(fov / 2.0f);
     Vector3 rayDir(px, py, -1.0f);
@@ -59,13 +169,10 @@ Intensity Camera::Phong(int pixelX, int pixelY)
     }
 
     Sphere hitSphere;
- 
+
     // Check whether to draw object or background
     Vector3 contactPoint;
     bool drawColor = false;
-    //ray.intersectsSphere(spheres[0], contactPoint);
-    //std::cout << "\n";
-    //contactPoint.WriteCoordsToConsole();
     for (int i = 0; i < spheres.size(); i++)
     {
         if (ray.intersectsSphere(spheres[i], contactPoint))
@@ -76,36 +183,115 @@ Intensity Camera::Phong(int pixelX, int pixelY)
         }
     }
     if (drawColor)
-    {
-        float specular = 0.5f;
-        float a = 32.0f;
-        float specularCoef = 0.7f;
-        float k = 0.8f;
-        float r, g, b, cosinus;
-        Vector3 I = ray.GetDirection().Normalize();
-        Vector3 N = hitSphere.GetNormal(contactPoint);
-        Vector3 R = I - (N * N.Dot(I) * 2.0f);
+    { 
+        //=================================================================================================
+        //========================================= usuń to potem =========================================
+        //=================================================================================================
+        //================================= Maciek, jesteśmy DEBILAMI xD ==================================
+        //=================================================================================================
+        //=============================== Braliśmy nie ten promień co trzeba ==============================
+        //============== Braliśmy promień obiekt - kamera, a nie obiekt - źródło światła ==================
+        //=================================================================================================
         
-        float ss = ray.GetDirection().Normalize().Dot(R);
-        //std::cout << ss << "\n";
-        if (ss > 0)
-        {
-            specular = std::pow(ss, a);
+
+        // Please work now
+        Ray chaseTheLight = Ray(contactPoint, (contactPoint - pLight.GetPosition()).Normalize());
+
+
+
+        // Normal vector at the hit point
+        Vector3 normal = (contactPoint - hitSphere.GetCenter()).Normalize();
+        // View direction vector from camera to hit point
+        Vector3 viewDir = (contactPoint - cameraPosition).Normalize();
+        //Vector3 viewDir = (cameraPosition - contactPoint).Normalize();
+        // Reflection direction vector
+        Vector3 minusRayDir = ray.GetDirection() * (-1);
+        Vector3 reflectDir = minusRayDir.Reflect(normal).Normalize();
+        Vector3 helppls = chaseTheLight.GetDirection() - normal * normal.Dot(chaseTheLight.GetDirection()) * 2;
+
+        // Ambient light
+        Intensity ambientLight = Intensity(0.1f, 0.1f, 0.1f);
+
+        // Diffuse light
+        Vector3 lightDir = (pLight.GetPosition() - contactPoint).Normalize();
+        float diff = std::max(0.0f, normal.Dot(lightDir));
+        Intensity diffuseLight = objectColor * pLight.GetColor() * diff;
+
+        // Specular light
+        Vector3 halfwayDir = (lightDir + viewDir).Normalize();
+        float specularIntensity = 4.0f;
+        float spec = pow(std::max(0.0f, normal.Dot(halfwayDir)), specularIntensity); spec = pow(std::max(viewDir.Dot(helppls * (-1)), 0.0f), specularIntensity);
+        Intensity specularLight = pLight.GetColor() * spec;
+
+        // Calculate total light intensity
+        Intensity totalLightIntensity = ambientLight + diffuseLight + specularLight;
+
+        // Debugger lmao
+        /*
+        if (pixelX == 0.49 * screenWidth or pixelX == 0.5 * screenWidth or pixelY == 0.47 * screenHeight or pixelY == 0.48 * screenHeight) {
+            return Intensity(0.0f, 0.8f, 0.9f);
         }
-        else
-        {
-            specular = 0;
-        }
-        specular *= specularCoef;
-        Intensity sIntensity = pLight.GetIntensity() * specular;
-        cosinus = (ray.GetDirection() * -1).Normalize().Dot(hitSphere.GetNormal(contactPoint));
-        Intensity lightIntensity = pLight.GetIntensity();
-        r = lightIntensity.GetRed() * k * cosinus; 
-        g = lightIntensity.GetGreen() * k * cosinus;
-        b = lightIntensity.GetBlue() * k * cosinus;
-        Intensity diffuseIntensity = Intensity(r, g, b) + backgroundColor;
-        return sIntensity + diffuseIntensity;
+        if (pixelX > 0.49 * screenWidth && pixelX < 0.5 * screenWidth && pixelY > 0.47 * screenHeight && pixelY < 0.48 * screenHeight) {
+            //specularLight.WriteToConsole();
+            //std::cout << ", spec:" << spec << "\n\n
+            std::cout << "RayDir: ";
+            ray.GetDirection().WriteCoordsToConsole();
+            std::cout << ",\nNormal: ";
+            normal.WriteCoordsToConsole();
+            std::cout << ",\nReflectDir(?): ";
+            helppls.WriteCoordsToConsole();
+            std::cout << ",\nViewDir: ";
+            viewDir.WriteCoordsToConsole();
+            std::cout << ",\nDot product: " << viewDir.Dot(helppls * (-1)) << "\n\n";
+        } */
+
+        // Apply light intensity to the object color
+        Intensity finalColor = objectColor * (ambientLight + diffuseLight) + specularLight;
+
+        return finalColor;
     }
+    //if (drawColor)
+    //{
+    //    // Normal vector at the hit point
+    //    Vector3 normal = (contactPoint - hitSphere.GetCenter()).Normalize();
+    //    // View direction vector from camera to hit point
+    //    Vector3 viewDir = (contactPoint - cameraPosition).Normalize();
+    //    //Vector3 viewDir = (cameraPosition - contactPoint).Normalize();
+    //    // Reflection direction vector
+    //    Vector3 minusRayDir = ray.GetDirection() * (-1);
+    //    Vector3 reflectDir = minusRayDir.Reflect(normal).Normalize();
+    //
+    //    // Ambient light
+    //    Intensity ambientLight = Intensity(0.1f, 0.1f, 0.1f);
+    //
+    //    // Diffuse light
+    //    Vector3 lightDir = (pLight.GetPosition() - contactPoint).Normalize();
+    //    float diff = std::max(0.0f, normal.Dot(lightDir));
+    //    Intensity diffuseLight = objectColor * pLight.GetColor() * diff * pLight.GetIntensity();
+    //
+    //    // Specular light
+    //    float specularIntensity = 64.0f;
+    //    float spec = pow(std::max(0.0f, reflectDir.Dot(viewDir)), specularIntensity);
+    //    Intensity specularLight = spec * pLight.GetIntensity();//pLight.GetColor() * 
+    //
+    //    // Calculate total light intensity
+    //    Intensity totalLightIntensity = ambientLight + diffuseLight + specularLight;
+    //
+    //    // Apply light intensity to the object color
+    //    Intensity finalColor = objectColor * (ambientLight + diffuseLight) + specularLight;
+    //
+    //    if (pixelX > screenWidth / 2)
+    //    {
+    //        std::cout << "viewDir: ";
+    //        viewDir.WriteCoordsToConsole();
+    //        std::cout << ", reflectDir: ";
+    //        reflectDir.WriteCoordsToConsole();
+    //        std::cout << ", coeff: " << reflectDir.Dot(viewDir) << "\n";
+    //    }
+    //
+    //    return finalColor;
+    //}
+
     else
         return backgroundColor;
 }

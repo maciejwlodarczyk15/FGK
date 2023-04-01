@@ -16,7 +16,7 @@ public:
 	float Dot(Vector3 givenVector);
 	Vector3 Cross(Vector3 givenVector);
 	Vector3 Normalize();
-
+	Vector3 Reflect(Vector3 normal);
 	float AngleBetweenVectors(Vector3 givenVector);
 
 	void WriteCoordsToConsole();

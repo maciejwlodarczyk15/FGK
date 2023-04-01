@@ -10,21 +10,21 @@ Intensity::Intensity()
 
 Intensity::Intensity(float r, float g, float b)
 {
-	this->r = r;
-	this->g = g;
-	this->b = b;
+	this->r = std::max(std::min(r, 1.0f), 0.0f);
+	this->g = std::max(std::min(g, 1.0f), 0.0f);
+	this->b = std::max(std::min(b, 1.0f), 0.0f);
 }
 
 Intensity::Intensity(float r, float g)
 {
-	this->r = r;
-	this->g = g;
+	this->r = std::max(std::min(r, 1.0f), 0.0f);
+	this->g = std::max(std::min(g, 1.0f), 0.0f);
 	b = 0.0f;
 }
 
 Intensity::Intensity(float r)
 {
-	this->r = r;
+	this->r = std::max(std::min(r, 1.0f), 0.0f);
 	g = 0.0f;
 	b = 0.0f;
 }

@@ -22,11 +22,25 @@ public:
 
 	Intensity operator+(Intensity o)
 	{
-		return Intensity(r + o.GetRed(), g + o.GetGreen(), b + o.GetBlue());
+		float new_r = r + o.GetRed();
+		float new_g = g + o.GetGreen();
+		float new_b = b + o.GetBlue();
+		if (new_r > 1.0f) new_r = 1.0f;
+		if (new_g > 1.0f) new_g = 1.0f;
+		if (new_b > 1.0f) new_b = 1.0f;
+
+		return Intensity(new_r, new_g, new_b);
 	}
 	Intensity operator-(Intensity o)
 	{
-		return Intensity(r - o.GetRed(), g - o.GetGreen(), b - o.GetBlue());
+		float new_r = r + o.GetRed();
+		float new_g = g + o.GetGreen();
+		float new_b = b + o.GetBlue();
+		if (new_r < 0.0f) new_r = 0.0f;
+		if (new_g < 0.0f) new_g = 0.0f;
+		if (new_b < 0.0f) new_b = 0.0f;
+
+		return Intensity(new_r, new_g, new_b);
 	}
 	Intensity operator*(float o)
 	{

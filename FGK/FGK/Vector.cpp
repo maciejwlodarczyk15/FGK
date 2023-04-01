@@ -50,6 +50,11 @@ Vector3 Vector3::Normalize()
 	}
 }
 
+Vector3 Vector3::Reflect(Vector3 normal)
+{
+	return *this - normal * (this->Dot(normal) * 2.0f);
+}
+
 float Vector3::AngleBetweenVectors(Vector3 givenVector)
 {
 	float dotProduct = this->Dot(givenVector);
