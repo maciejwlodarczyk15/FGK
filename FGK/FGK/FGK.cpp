@@ -38,7 +38,7 @@ int main()
     PointLight light1(Vector3(0.0f, 5.0f, 0.0f), Intensity(1.0f, 1.0f, 1.0f), 10.0f, 10.0f, 1.0f, 0.14f, 0.07f);
 
     Camera camera(camPos, camTarget, camUp, fov, farPlane, farPlane, maxDepth,
-        img, objectColor, backgroundColor, spheres, meshes, light1, false);
+        img, objectColor, backgroundColor, spheres, meshes, light1, true);
 
     camera.Render();
 

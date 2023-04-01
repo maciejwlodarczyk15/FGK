@@ -15,3 +15,8 @@ Vector3 Sphere::GetCenter()
 {
 	return center;
 }
+
+Vector3 Sphere::GetNormal(Vector3 contact)
+{
+	return (contact - center);
+}
