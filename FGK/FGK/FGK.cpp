@@ -15,7 +15,6 @@ int main()
 
     Image img(screenWidth, screenHeight);
 
-    //Vector3 camPos(0.0f, 10.0f, 10.0f);
     Vector3 camPos(0.0f, 0.0f, 10.0f);
     Vector3 camTarget(0.0f, 0.0f, 0.0f);
     Vector3 camUp(0.0f, 1.0f, 0.0f);
@@ -33,9 +32,14 @@ int main()
     spheres.push_back(Sphere(1.0f, Vector3(0.0f, 0.0f, 0.0f)));
 
     PointLight light1(Vector3(0.0f, 5.0f, 0.0f), Intensity(1.0f, 1.0f, 1.0f), 250.0f, 10.0f, 1.0f, 0.14f, 0.07f);
+    std::vector<PointLight> lights;
+    lights.push_back(light1);
+    PointLight light2(Vector3(0.0f, -5.0f, 0.0f), Intensity(1.0f, 1.0f, 1.0f), 250.0f, 10.0f, 1.0f, 0.14f, 0.07f);
+    lights.push_back(light2);
+
 
     Camera camera(camPos, camTarget, camUp, fov, farPlane, farPlane, maxDepth,
-        img, objectColor, backgroundColor, spheres, meshes, light1, true);
+        img, objectColor, backgroundColor, spheres, meshes, lights, true);
 
     camera.Render();
 

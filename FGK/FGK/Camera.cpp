@@ -7,8 +7,8 @@
 #define M_PI 3.14159265358979323846
 
 Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree, float nPlane, float fPlane, int maxDepth,
-    Image img, Intensity objectColor, Intensity backgroundColor, 
-    std::vector<Sphere> spheres, std::vector<Mesh> meshes, PointLight pLight, bool isOrtographic)
+               Image img, Intensity objectColor, Intensity backgroundColor, 
+               std::vector<Sphere> spheres, std::vector<Mesh> meshes, std::vector<PointLight> lights, bool isOrtographic)
 {
     cameraPosition = camPos;
     cameraTarget = camTarget;
@@ -29,85 +29,7 @@ Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree
     this->spheres = spheres;
     this->maxDepth = maxDepth;
     this->meshes = meshes;
-    this->pLight = pLight;
-}
-
-Intensity Camera::Phong(int pixelX, int pixelY)
-{
-    float px = (2.0f * (pixelX + 0.5f) / screenWidth - 1.0f) * aspectRatio * tan(fov / 2.0f);
-    float py = (1.0f - 2.0f * (pixelY + 0.5f) / screenHeight) * tan(fov / 2.0f);
-    Vector3 rayDir(px, py, -1.0f);
-    rayDir.Normalize();
-
-    if (!isOrtographic)
-    {
-        Vector3 cameraDir = (cameraTarget - cameraPosition).Normalize();
-        Vector3 cameraVectorRight = cameraVecUp.Cross(cameraDir).Normalize();
-        Vector3 cameraUpNew = cameraDir.Cross(cameraVectorRight).Normalize();
-        rayDir = (cameraVectorRight * px + cameraUpNew * py + cameraDir / fov).Normalize();
-    }
-
-    Ray ray(cameraPosition, rayDir);
-    if (isOrtographic)
-    {
-        Vector3 rayOrigin = cameraPosition + Vector3(1, 0, 0) * px + Vector3(0, 1, 0) * py;
-        ray = Ray(rayOrigin, rayDir);
-    }
-
-    Sphere hitSphere;
-
-    // Check whether to draw object or background
-    Vector3 contactPoint;
-    bool drawColor = false;
-    for (int i = 0; i < spheres.size(); i++)
-    {
-        if (ray.intersectsSphere(spheres[i], contactPoint))
-        {
-            drawColor = true;
-            hitSphere = spheres[i];
-            break;
-        }
-    }
-    if (drawColor)
-    { 
-        // Please work now
-        Ray chaseTheLight = Ray(contactPoint, (contactPoint - pLight.GetPosition()).Normalize());
-
-        // Normal vector at the hit point
-        Vector3 normal = (contactPoint - hitSphere.GetCenter()).Normalize();
-        // View direction vector from camera to hit point
-        Vector3 viewDir = (contactPoint - cameraPosition).Normalize();
-        //Vector3 viewDir = (cameraPosition - contactPoint).Normalize();
-        // Reflection direction vector
-        Vector3 minusRayDir = ray.GetDirection() * (-1);
-        Vector3 reflectDir = minusRayDir.Reflect(normal).Normalize();
-        Vector3 helppls = chaseTheLight.GetDirection() - normal * normal.Dot(chaseTheLight.GetDirection()) * 2;
-
-        // Ambient light
-        Intensity ambientLight = Intensity(0.1f, 0.1f, 0.1f);
-
-        // Diffuse light
-        Vector3 lightDir = (pLight.GetPosition() - contactPoint).Normalize();
-        float diff = std::max(0.0f, normal.Dot(lightDir));
-        Intensity diffuseLight = objectColor * pLight.GetColor() * diff;
-
-        // Specular light
-        Vector3 halfwayDir = (lightDir + viewDir).Normalize();
-        float specularIntensity = 4.0f;
-        float spec = pow(std::max(0.0f, normal.Dot(halfwayDir)), specularIntensity); spec = pow(std::max(viewDir.Dot(helppls * (-1)), 0.0f), specularIntensity);
-        Intensity specularLight = pLight.GetColor() * spec;
-
-        // Calculate total light intensity
-        Intensity totalLightIntensity = ambientLight + diffuseLight + specularLight;
-
-        // Apply light intensity to the object color
-        Intensity finalColor = objectColor * (ambientLight + diffuseLight) + specularLight;
-
-        return finalColor;
-    }
-
-    else
-        return backgroundColor;
+    this->lights = lights;
 }
 
 Intensity Camera::Phong(float px, float py)
@@ -168,11 +90,12 @@ Intensity Camera::Phong(float px, float py)
     
     if (drawColor)
     {
-        Vector3 zero;
+        // Ambient light
+        Intensity ambientLight = Intensity(0.3f, 0.3f, 0.3f);
+
+        Intensity finalColor = ambientLight * objectColor;
         bool isBlocked = false;
-        Ray z(contactPoint, pLight.GetPosition());
         Vector3 contactPoint2;
-        
         Vector3 normal;
         
         // Normal vector at the hit point
@@ -185,72 +108,74 @@ Intensity Camera::Phong(float px, float py)
             normal = hitTriangle.GetVn();
         }
 
-        Ray chaseTheLight = Ray(contactPoint + (pLight.GetPosition() - contactPoint).Normalize() * 0.1, (pLight.GetPosition() - contactPoint).Normalize());
-
-        if (isSphere)
+        for (int i = 0; i < lights.size(); i++)
         {
-            for (int i = 0; i < spheres.size(); i++)
-            {
-                if (chaseTheLight.intersectsSphere(spheres[i], contactPoint2))
-                {
-                    if ((contactPoint - contactPoint2).Length() < (contactPoint - pLight.GetPosition()).Length())
-                    {
-                        isBlocked = true;
+            isBlocked = false;
+            Ray chaseTheLight = Ray(contactPoint + (lights[i].GetPosition() - contactPoint).Normalize() * 0.1, (lights[i].GetPosition() - contactPoint).Normalize());
 
-                        break;
-                    }
-                }
-            }
-        }
-        else
-        {
-            std::vector<Mesh> newMeshes;
-
-            for (int i = 0; i < meshes.size(); i++)
+            if (isSphere)
             {
-                for (int j = 0; j < meshes[i].GetTriangles().size(); j++)
+                for (int i = 0; i < spheres.size(); i++)
                 {
-                    if (chaseTheLight.intersectTriangle(meshes[i].GetTriangles()[j], contactPoint2))
+                    if (chaseTheLight.intersectsSphere(spheres[i], contactPoint2))
                     {
-                        if ((contactPoint - contactPoint2).Length() < (contactPoint - pLight.GetPosition()).Length())
+                        if ((contactPoint - contactPoint2).Length() < (contactPoint - lights[i].GetPosition()).Length())
                         {
                             isBlocked = true;
+
                             break;
                         }
                     }
                 }
             }
+            else
+            {
+                std::vector<Mesh> newMeshes;
+
+                for (int i = 0; i < meshes.size(); i++)
+                {
+                    for (int j = 0; j < meshes[i].GetTriangles().size(); j++)
+                    {
+                        if (chaseTheLight.intersectTriangle(meshes[i].GetTriangles()[j], contactPoint2))
+                        {
+                            if ((contactPoint - contactPoint2).Length() < (contactPoint - lights[i].GetPosition()).Length())
+                            {
+                                isBlocked = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // View direction vector from camera to hit point
+            Vector3 viewDir = (contactPoint - cameraPosition).Normalize();
+
+            // Reflection direction vector
+            Vector3 minusRayDir = ray.GetDirection() * (-1);
+            Vector3 reflectDir = minusRayDir.Reflect(normal).Normalize();
+            Vector3 helppls = chaseTheLight.GetDirection() - normal * normal.Dot(chaseTheLight.GetDirection()) * 2;
+
+            // Diffuse light
+            Vector3 lightDir = (contactPoint - lights[i].GetPosition()).Normalize();
+            float diff = std::max(0.0f, -normal.Dot(lightDir));
+            Intensity diffuseLight = objectColor * lights[i].GetColor() * diff;
+
+            // Specular light
+            Vector3 halfwayDir = (lightDir + viewDir).Normalize();
+            float specularIntensity = 4.0f;
+            float spec = pow(std::max(0.0f, normal.Dot(halfwayDir)), specularIntensity);
+            spec = pow(std::max(viewDir.Dot(helppls), 0.0f), specularIntensity);
+            Intensity specularLight = lights[i].GetColor() * spec;
+
+            if (isBlocked)
+            {
+            }
+            else
+            {
+                finalColor = finalColor + diffuseLight + specularLight;
+            }
         }
-
-        // View direction vector from camera to hit point
-        Vector3 viewDir = (contactPoint - cameraPosition).Normalize();
-        // Reflection direction vector
-        Vector3 minusRayDir = ray.GetDirection() * (-1);
-        Vector3 reflectDir = minusRayDir.Reflect(normal).Normalize();
-        Vector3 helppls = chaseTheLight.GetDirection() - normal * normal.Dot(chaseTheLight.GetDirection()) * 2;
-
-        // Ambient light
-        Intensity ambientLight = Intensity(0.3f, 0.3f, 0.3f);
-
-        // Diffuse light
-        Vector3 lightDir = (contactPoint - pLight.GetPosition()).Normalize();
-        float diff = std::max(0.0f, -normal.Dot(lightDir));
-        Intensity diffuseLight = objectColor * pLight.GetColor() * diff;
-
-        // Specular light
-        Vector3 halfwayDir = (lightDir + viewDir).Normalize();
-        float specularIntensity = 4.0f;
-        float spec = pow(std::max(0.0f, normal.Dot(halfwayDir)), specularIntensity);
-        spec = pow(std::max(viewDir.Dot(helppls), 0.0f), specularIntensity);
-        Intensity specularLight = pLight.GetColor() * spec;
-
-        // Apply light intensity to the object color
-        Intensity finalColor = objectColor *ambientLight + diffuseLight + specularLight;
-        if (isBlocked)
-        {
-            finalColor = ambientLight * objectColor /*+ diffuseLight*/;
-        }
-
         return finalColor;
     }
 
@@ -270,9 +195,8 @@ void Camera::Render()
             float p1y = 1.0f - 2.0f * y / screenHeight;
             float p2x = 2.0f * (x + 0.5f) / screenWidth - 1.0f;
             float p2y = 1.0f - 2.0f * (y + 0.5f) / screenHeight;
-            img.SetPixel(x, y, Phong((p1x + p2x) / 2, (p1y + p2y) / 2));  // Phong float
+            img.SetPixel(x, y, Phong((p1x + p2x) / 2, (p1y + p2y) / 2));
             //img.SetPixel(x, y, PixelDivider(p1x, p1y, p2x, p2y, currentDepth)); // Pixel divider
-            //img.SetPixel(x, y, Phong(x, y));  // Phong int
         }
     }
     img.DrawOnWindow();

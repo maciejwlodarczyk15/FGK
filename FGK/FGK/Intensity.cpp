@@ -29,13 +29,6 @@ Intensity::Intensity(float r)
 	b = 0.0f;
 }
 
-//Intensity::Intensity(Vector3 newVector)
-//{
-//	this->r = newVector.x;
-//	this->g = newVector.y;
-//	this->b = newVector.z;
-//}
-
 float Intensity::GetRed()
 {
 	return r;

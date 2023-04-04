@@ -12,7 +12,6 @@ public:
 	Intensity(float r, float g, float b);
 	Intensity(float r, float g);
 	Intensity(float r);
-	//Intensity(Vector3 newVector);
 
 	float GetRed();
 	float GetGreen();
@@ -60,7 +59,6 @@ public:
 		float red = r * o.GetRed();
 		float green = g * o.GetGreen();
 		float blue = b * o.GetBlue();
-		//float intensity = red + green + blue;
 		return Intensity(red, green, blue);
 	}
 	bool operator !=(Intensity o)

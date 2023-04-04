@@ -25,18 +25,16 @@ private:
     Intensity backgroundColor;
     std::vector<Sphere> spheres;
     std::vector<Mesh> meshes;
-    PointLight pLight;
+    std::vector<PointLight> lights;
 
 public:
     Camera(Vector3 camPos, Vector3 camTarget,  Vector3 camUp, float fovDegree, float nPlane, float fPlane, int maxDepth,
         Image img, Intensity objectColor, Intensity backgroundColor, 
-        std::vector<Sphere> spheres, std::vector<Mesh> meshes, PointLight pLight, bool isOrtographic);
+        std::vector<Sphere> spheres, std::vector<Mesh> meshes, std::vector<PointLight> lights, bool isOrtographic);
 
     void Render();
 
     Intensity PixelDivider(float p1x, float p1y, float p2x, float p2y, int depth);
-
-    Intensity Phong(int pixelX, int pixelY);
 
     Intensity Phong(float pixelX, float pixelY);
 };
