@@ -49,6 +49,17 @@ public:
 		Vector3 newVector({ x / number, y / number, z / number });
 		return newVector;
 	}
+	bool operator!=(Vector3 o)
+	{
+		if (x == o.x && y == o.y && z == o.z)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
 };
 
 
