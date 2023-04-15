@@ -8,7 +8,7 @@
 
 Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree, float nPlane, float fPlane, int maxDepth,
                Image img, Intensity objectColor, Intensity backgroundColor, 
-               std::vector<Sphere> spheres, std::vector<Mesh> meshes, std::vector<PointLight> lights, bool isOrtographic)
+               std::vector<Sphere> spheres, std::vector<Mesh> meshes, std::vector<PointLight> lights, std::vector<Plane> planes, bool isOrtographic)
 {
     cameraPosition = camPos;
     cameraTarget = camTarget;
@@ -30,10 +30,12 @@ Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree
     this->maxDepth = maxDepth;
     this->meshes = meshes;
     this->lights = lights;
+    this->planes = planes;
 }
 
 Intensity Camera::Phong(float px, float py)
 {
+    // Pixel/Camera settings
     px *= aspectRatio * tan(fov / 2.0f);
     py *= tan(fov / 2.0f);
     Vector3 rayDir(px, py, -1.0f);
@@ -54,16 +56,17 @@ Intensity Camera::Phong(float px, float py)
         ray = Ray(rayOrigin, rayDir);
     }
 
+    // Checking if object hit, if hit drawColor = true
     Sphere hitSphere;
-    Triangle hitTriangle;
+    Plane hitPlane;
     bool isSphere = false;
 
     // Check whether to draw object or background
-    Vector3 contactPoint;
+    Vector3 objectContactPoint;
     bool drawColor = false;
     for (int i = 0; i < spheres.size(); i++)
     {
-        if (ray.intersectsSphere(spheres[i], contactPoint))
+        if (ray.intersectsSphere(spheres[i], objectContactPoint))
         {
             drawColor = true;
             hitSphere = spheres[i];
@@ -71,19 +74,15 @@ Intensity Camera::Phong(float px, float py)
             break;
         }
     }
-    std::vector<Mesh> newMeshes;
     if (!isSphere)
     {
-        for (int i = 0; i < meshes.size(); i++)
+        for (int i = 0; i < planes.size(); i++)
         {
-            for (int j = 0; j < meshes[i].GetTriangles().size(); j++)
+            if (ray.intersectPlane(planes[i], objectContactPoint))
             {
-                if (ray.intersectTriangle(meshes[i].GetTriangles()[j], contactPoint))
-                {
-                    drawColor = true;
-                    hitTriangle = meshes[i].GetTriangles()[j];
-                    break;
-                }
+                drawColor = true;
+                hitPlane = planes[i];
+                break;
             }
         }
     }
@@ -92,64 +91,99 @@ Intensity Camera::Phong(float px, float py)
     {
         // Ambient light
         Intensity ambientLight = Intensity(0.3f, 0.3f, 0.3f);
+        Intensity finalColor;
 
-        Intensity finalColor = ambientLight * objectColor;
+        if (!isSphere)
+        {
+            finalColor = ambientLight * hitPlane.GetColor();
+        }
+        if (isSphere)
+        {
+            finalColor = ambientLight * objectColor;
+        }
+
         bool isBlocked = false;
-        Vector3 contactPoint2;
+        Vector3 blockContactPoint;
         Vector3 normal;
         
         // Normal vector at the hit point
         if (isSphere)
         {
-            normal = (contactPoint - hitSphere.GetCenter()).Normalize();
+            normal = (objectContactPoint - hitSphere.GetCenter()).Normalize();
         }
         else 
         {
-            normal = hitTriangle.GetVn();
+            // Plane has same normal on whole area
+            normal = hitPlane.GetNormal();
         }
 
+        // Iterating through all lights
         for (int i = 0; i < lights.size(); i++)
         {
+            // Check if blocked, ray -> Position: contact point + offset in direction of light, Direction: from contactPoint to light
             isBlocked = false;
-            Ray chaseTheLight = Ray(contactPoint + (lights[i].GetPosition() - contactPoint).Normalize() * 0.1, (lights[i].GetPosition() - contactPoint).Normalize());
+            Ray chaseTheLight = Ray(objectContactPoint + (lights[i].GetPosition() - objectContactPoint).Normalize() * 0.01, (lights[i].GetPosition() - objectContactPoint).Normalize());
 
+            // If object is a sphere
             if (isSphere)
             {
-                for (int i = 0; i < spheres.size(); i++)
+                // Iterate through all spheres
+                for (int j = 0; j < spheres.size(); j++)
                 {
-                    if (chaseTheLight.intersectsSphere(spheres[i], contactPoint2))
+                    // check if hit any other sphere
+                    if (chaseTheLight.intersectsSphere(spheres[i], blockContactPoint))
                     {
-                        if ((contactPoint - contactPoint2).Length() < (contactPoint - lights[i].GetPosition()).Length())
+                        // Check if distance between original and new is less than original - light = object between
+                        if ((objectContactPoint - blockContactPoint).Length() < (objectContactPoint - lights[i].GetPosition()).Length())
                         {
                             isBlocked = true;
-
+                            break;
+                        }
+                    }
+                }
+                // Do same for all planes
+                for (int j = 0; j < planes.size(); j++)
+                {
+                    if (chaseTheLight.intersectPlane(planes[j], blockContactPoint))
+                    {
+                        if ((objectContactPoint - blockContactPoint).Length() < (objectContactPoint - lights[i].GetPosition()).Length())
+                        {
+                            isBlocked = true;
                             break;
                         }
                     }
                 }
             }
-            else
+            // Same with planes
+            if (!isSphere)
             {
-                std::vector<Mesh> newMeshes;
-
-                for (int i = 0; i < meshes.size(); i++)
+                for (int j = 0; j < spheres.size(); j++)
                 {
-                    for (int j = 0; j < meshes[i].GetTriangles().size(); j++)
+                    if (chaseTheLight.intersectsSphere(spheres[i], blockContactPoint))
                     {
-                        if (chaseTheLight.intersectTriangle(meshes[i].GetTriangles()[j], contactPoint2))
+                        // Check if distance between original and new is less than original - light = object between
+                        if ((objectContactPoint - blockContactPoint).Length() < (objectContactPoint - lights[i].GetPosition()).Length())
                         {
-                            if ((contactPoint - contactPoint2).Length() < (contactPoint - lights[i].GetPosition()).Length())
-                            {
-                                isBlocked = true;
-                                break;
-                            }
+                            isBlocked = true;
+                            break;
+                        }
+                    }
+                }
+                for (int j = 0; j < planes.size(); j++)
+                {
+                    if (chaseTheLight.intersectPlane(planes[j], blockContactPoint))
+                    {
+                        if ((objectContactPoint - blockContactPoint).Length() < (objectContactPoint - lights[i].GetPosition()).Length())
+                        {
+                            isBlocked = true;
+                            break;
                         }
                     }
                 }
             }
 
             // View direction vector from camera to hit point
-            Vector3 viewDir = (contactPoint - cameraPosition).Normalize();
+            Vector3 viewDir = (objectContactPoint - cameraPosition).Normalize();
 
             // Reflection direction vector
             Vector3 minusRayDir = ray.GetDirection() * (-1);
@@ -157,9 +191,17 @@ Intensity Camera::Phong(float px, float py)
             Vector3 helppls = chaseTheLight.GetDirection() - normal * normal.Dot(chaseTheLight.GetDirection()) * 2;
 
             // Diffuse light
-            Vector3 lightDir = (contactPoint - lights[i].GetPosition()).Normalize();
+            Vector3 lightDir = (objectContactPoint - lights[i].GetPosition()).Normalize();
             float diff = std::max(0.0f, -normal.Dot(lightDir));
-            Intensity diffuseLight = objectColor * lights[i].GetColor() * diff;
+            Intensity diffuseLight;
+            if (!isSphere)
+            {
+                diffuseLight = hitPlane.GetColor() * lights[i].GetColor() * diff;
+            }
+            if (isSphere)
+            {
+                diffuseLight = objectColor * lights[i].GetColor() * diff;
+            }
 
             // Specular light
             Vector3 halfwayDir = (lightDir + viewDir).Normalize();
@@ -168,12 +210,13 @@ Intensity Camera::Phong(float px, float py)
             spec = pow(std::max(viewDir.Dot(helppls), 0.0f), specularIntensity);
             Intensity specularLight = lights[i].GetColor() * spec;
 
-            if (isBlocked)
-            {
-            }
-            else
+            if (!isBlocked)
             {
                 finalColor = finalColor + diffuseLight + specularLight;
+            }
+            if (isBlocked && !isSphere)
+            {
+                //finalColor = finalColor + diffuseLight + specularLight;
             }
         }
         return finalColor;

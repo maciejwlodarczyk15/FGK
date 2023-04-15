@@ -10,6 +10,11 @@ Ray::Ray(Vector3 point, Vector3 direct)
 	direction = direct;
 }
 
+Vector3 Ray::GetPosition()
+{
+    return origin;
+}
+
 Vector3 Ray::GetDirection()
 {
     return direction;
@@ -61,7 +66,7 @@ bool Ray::intersectPlane(Plane plane, Vector3& contactPoint)
 
 bool Ray::intersectTriangle(Triangle triangle, Vector3& contactPoint)
 {
-    Plane trianglePlane(triangle.GetVn(), triangle.GetV1());
+    Plane trianglePlane(triangle.GetVn(), triangle.GetV1(), Intensity(0.0f ,0.0f ,0.0f));
     if (!this->intersectPlane(trianglePlane, contactPoint))
     {
         return false;

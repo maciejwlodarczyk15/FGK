@@ -13,6 +13,7 @@ private:
 public:
 	Ray(Vector3 point, Vector3 direct);
 
+	Vector3 GetPosition();
 	Vector3 GetDirection();
 
 	bool intersectsSphere(Sphere sphere, Vector3& contactPoint);
