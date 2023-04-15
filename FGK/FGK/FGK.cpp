@@ -27,35 +27,29 @@ int main()
     Intensity backgroundColor(0.0f, 0.0f, 0.0f);
 
     std::vector<Sphere> spheres;
-    spheres.push_back(Sphere(1.0f, Vector3(-1.0f, -1.0f, -3.0f)));
-    //spheres.push_back(Sphere(1.0f, Vector3(1.0f, -1.0f, 0.0f)));
+    spheres.push_back(Sphere(1.0f, Vector3(-1.0f, -0.9f, -3.0f), 1, Intensity(1.0f, 0.0f, 0.0f)));
+    spheres.push_back(Sphere(1.0f, Vector3(1.0f, -1.0f, -2.0f), 1, Intensity(1.0f, 0.0f, 0.0f)));
 
     std::vector<PointLight> lights;
     PointLight light1(Vector3(0.0f, 1.0f, 0.0f), Intensity(1.0f, 1.0f, 1.0f), 250.0f, 10.0f, 1.0f, 0.14f, 0.07f);
     lights.push_back(light1);
 
     std::vector<Plane> planes;
-    // working
-    Plane backPlane(Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 0.0f, -5.0f), Intensity(1.0f, 1.0f, 1.0f));
-    //planes.push_back(backPlane);
-    
-    Plane frontPlane(Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 0.0f, 5.0f), Intensity(1.0f, 1.0f, 1.0f));
-    //planes.push_back(frontPlane);
-    // FRONT MIGHT BE SOMETHING WRONG
 
+    Plane backPlane(Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 0.0f, -11.0f), Intensity(1.0f, 1.0f, 1.0f));
+    Plane frontPlane(Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 0.0f, 11.0f), Intensity(1.0f, 1.0f, 1.0f));
     Plane leftPlane(Vector3(1.0f, 0.0f, 0.0f), Vector3(-3.0f, 0.0f, 0.0f), Intensity(1.0f, 0.0f, 0.0f));
     Plane rightPlane(Vector3(-1.0f, 0.0f, 0.0f), Vector3(3.0f, 0.0f, 0.0f), Intensity(0.0f, 0.0f, 1.0f));
-
-    Plane upPlane(Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 2.0f, 0.0f), Intensity(1.0f, 1.0f, 1.0f));
-    //planes.push_back(upPlane);
-
+    Plane upPlane(Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 2.0f, 0.0f), Intensity(1.0f, 1.0f, 1.0f));
     Plane downPlane(Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, -2.0f, 0.0f), Intensity(0.0f, 1.0f, 0.0f));
 
-
-    planes.push_back(downPlane);
     planes.push_back(leftPlane);
+    planes.push_back(downPlane);
     planes.push_back(rightPlane);
-
+    planes.push_back(upPlane);
+    planes.push_back(backPlane);
+    planes.push_back(frontPlane);
+    
     Camera camera(camPos, camTarget, camUp, fov, farPlane, farPlane, maxDepth,
         img, objectColor, backgroundColor, spheres, meshes, lights, planes, true);
 
