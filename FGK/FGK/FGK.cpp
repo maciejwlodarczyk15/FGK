@@ -27,6 +27,10 @@ int main()
     std::vector<Sphere> spheres;
     spheres.push_back(Sphere(1.0f, Vector3(-1.0f, -0.9f, -3.0f), 1, Intensity(1.0f, 0.0f, 0.0f)));
     spheres.push_back(Sphere(1.0f, Vector3(1.0f, -1.0f, -2.0f), 1, Intensity(1.0f, 0.0f, 0.0f)));
+    //spheres.push_back(Sphere(1.0f, Vector3(0.0f, 1.0f, -7.0f), 1, Intensity(1.0f, 0.0f, 0.0f)));
+    //spheres.push_back(Sphere(1.0f, Vector3(1.0f, 1.5f, -2.0f), 1, Intensity(1.0f, 0.0f, 0.0f)));
+    //spheres.push_back(Sphere(1.0f, Vector3(-1.5f, -1.0f, -2.0f), 1, Intensity(1.0f, 0.0f, 0.0f)));
+    //spheres.push_back(Sphere(1.0f, Vector3(-1.5f, 1.5f, -2.0f), 1, Intensity(1.0f, 0.0f, 0.0f)));
 
     std::vector<PointLight> lights;
     PointLight light1(Vector3(0.0f, 1.8f, 0.0f), Intensity(0.7f, 0.7f, 0.7f), 250.0f, 10.0f, 1.0f, 0.14f, 0.07f);

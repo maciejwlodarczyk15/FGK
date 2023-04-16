@@ -33,28 +33,29 @@ Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree
     this->planes = planes;
 }
 
-Intensity Camera::Phong(float px, float py, int reflectionDepth)
+Intensity Camera::Phong(Ray givenRay, int reflectionDepth)
 {
-    // Pixel/Camera settings
-    px *= aspectRatio * tan(fov / 2.0f);
-    py *= tan(fov / 2.0f);
-    Vector3 rayDir(px, py, -1.0f);
-    rayDir.Normalize();
-
-    if (!isOrtographic)
-    {
-        Vector3 cameraDir = (cameraTarget - cameraPosition).Normalize();
-        Vector3 cameraVectorRight = cameraVecUp.Cross(cameraDir).Normalize();
-        Vector3 cameraUpNew = cameraDir.Cross(cameraVectorRight).Normalize();
-        rayDir = (cameraVectorRight * px + cameraUpNew * py + cameraDir / fov).Normalize();
-    }
-
-    Ray ray(cameraPosition, rayDir);
-    if (isOrtographic)
-    {
-        Vector3 rayOrigin = cameraPosition + Vector3(1, 0, 0) * px + Vector3(0, 1, 0) * py;
-        ray = Ray(rayOrigin, rayDir);
-    }
+    Ray ray = givenRay;
+    // // Pixel/Camera settings
+    // px *= aspectRatio * tan(fov / 2.0f);
+    // py *= tan(fov / 2.0f);
+    // Vector3 rayDir(px, py, -1.0f);
+    // rayDir.Normalize();
+    // 
+    // if (!isOrtographic)
+    // {
+    //     Vector3 cameraDir = (cameraTarget - cameraPosition).Normalize();
+    //     Vector3 cameraVectorRight = cameraVecUp.Cross(cameraDir).Normalize();
+    //     Vector3 cameraUpNew = cameraDir.Cross(cameraVectorRight).Normalize();
+    //     rayDir = (cameraVectorRight * px + cameraUpNew * py + cameraDir / fov).Normalize();
+    // }
+    // 
+    // Ray ray(cameraPosition, rayDir);
+    // if (isOrtographic)
+    // {
+    //     Vector3 rayOrigin = cameraPosition + Vector3(1, 0, 0) * px + Vector3(0, 1, 0) * py;
+    //     ray = Ray(rayOrigin, rayDir);
+    // }
 
     // Checking if object hit, if hit drawColor = true
     Sphere hitSphere;
@@ -226,12 +227,12 @@ Intensity Camera::Phong(float px, float py, int reflectionDepth)
 
         // View direction vector from camera to hit point
         Vector3 viewDir = (objectContactPoint - cameraPosition).Normalize();
-
+        
         // Reflection direction vector
         Vector3 minusRayDir = ray.GetDirection() * (-1);
         Vector3 reflectDir = minusRayDir.Reflect(normal).Normalize();
         Vector3 helppls = chaseTheLight.GetDirection() - normal * normal.Dot(chaseTheLight.GetDirection()) * 2;
-
+        
         // Diffuse light
         Vector3 lightDir = (objectContactPoint - lights[i].GetPosition()).Normalize();
         float diff = std::max(0.0f, -normal.Dot(lightDir));
@@ -245,13 +246,47 @@ Intensity Camera::Phong(float px, float py, int reflectionDepth)
             diffuseLight = objectColor * lights[i].GetColor() * diff;
         }
 
+        //if (state == 2)
+        //{
+        //    float n1 = 1.0f;
+        //    float n2 = 1.5f;
+        //
+        //    float cosI = -normal.Dot(ray.GetDirection());
+        //    float sinT2 = (n1 / n2) * (n1 / n2) * (1 - cosI * cosI);
+        //
+        //    if (sinT2 > 1.0f)
+        //    {
+        //        // Total internal reflection
+        //        reflectDir = ray.GetDirection().Reflect(normal).Normalize();
+        //        diffuseLight = objectColor * lights[i].GetColor() * diff;
+        //    }
+        //
+        //    else
+        //    {
+        //        float cosT = sqrt(1.0f - sinT2);
+        //        Vector3 transmission = ((ray.GetDirection() + normal * cosI) / n2) - normal * cosT;
+        //        Ray refractedRay(objectContactPoint, transmission.Normalize());
+        //        Vector3 refractedHitPoint, refractedNormal;
+        //        float refractedDist;
+        //        if (refractedRay.intersectsSphere(objectPosition, objectRadius, refractedHitPoint, refractedNormal, refractedDist))
+        //        {
+        //            // Object inside sphere, flip the normal
+        //            refractedNormal = refractedNormal * -1;
+        //        }
+        //        Vector3 refractedViewDir = (refractedHitPoint - cameraPosition).Normalize();
+        //        Vector3 halfwayDir = (lightDir + refractedViewDir).Normalize();
+        //        float spec = pow(std::max(0.0f, refractedNormal.Dot(halfwayDir)), specularIntensity);
+        //        diffuseLight = objectColor * lights[i].GetColor() * (1.0f - spec) * diff;
+        //    }
+        //}
+
         // Specular light
         Vector3 halfwayDir = (lightDir + viewDir).Normalize();
         float specularIntensity = 4.0f;
         float spec = pow(std::max(0.0f, normal.Dot(halfwayDir)), specularIntensity);
         spec = pow(std::max(viewDir.Dot(helppls), 0.0f), specularIntensity);
         Intensity specularLight = lights[i].GetColor() * spec;
-
+        
         if (!isBlocked)
         {
             finalColor = finalColor + diffuseLight + specularLight;
@@ -262,9 +297,11 @@ Intensity Camera::Phong(float px, float py, int reflectionDepth)
     {
         Vector3 reflectDir = ray.GetDirection().Reflect(normal).Normalize();
         Ray reflectedRay(objectContactPoint + reflectDir * 0.001f, reflectDir);
-        Intensity reflectionColor = Phong(reflectedRay.GetPosition().x, reflectedRay.GetPosition().y, reflectionDepth - 1);
+        Intensity reflectionColor = Phong(reflectedRay, reflectionDepth - 1);
         finalColor = finalColor + reflectionColor;
     }
+
+
 
     return finalColor;
 }
@@ -281,7 +318,33 @@ void Camera::Render()
             float p1y = 1.0f - 2.0f * y / screenHeight;
             float p2x = 2.0f * (x + 0.5f) / screenWidth - 1.0f;
             float p2y = 1.0f - 2.0f * (y + 0.5f) / screenHeight;
-            img.SetPixel(x, y, Phong((p1x + p2x) / 2, (p1y + p2y) / 2, 1));
+
+            // Pixel/Camera settings
+            float px = (p1x + p2x) / 2;
+            float py = (p1y + p2y) / 2;
+
+            px *= aspectRatio * tan(fov / 2.0f);
+            py *= tan(fov / 2.0f);
+            Vector3 rayDir(px, py, -1.0f);
+            rayDir.Normalize();
+
+            if (!isOrtographic)
+            {
+                Vector3 cameraDir = (cameraTarget - cameraPosition).Normalize();
+                Vector3 cameraVectorRight = cameraVecUp.Cross(cameraDir).Normalize();
+                Vector3 cameraUpNew = cameraDir.Cross(cameraVectorRight).Normalize();
+                rayDir = (cameraVectorRight * px + cameraUpNew * py + cameraDir / fov).Normalize();
+            }
+
+            Ray ray(cameraPosition, rayDir);
+            if (isOrtographic)
+            {
+                Vector3 rayOrigin = cameraPosition + Vector3(1, 0, 0) * px + Vector3(0, 1, 0) * py;
+                ray = Ray(rayOrigin, rayDir);
+            }
+
+            //img.SetPixel(x, y, Phong((p1x + p2x) / 2, (p1y + p2y) / 2, 1));
+            img.SetPixel(x, y, Phong(ray, 1));
             //img.SetPixel(x, y, PixelDivider(p1x, p1y, p2x, p2y, currentDepth)); // Pixel divider
         }
     }

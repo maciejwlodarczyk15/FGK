@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "PointLight.h"
 #include "Plane.h"
+#include "Ray.h"
 #include <vector>
 
 class Camera {
@@ -36,8 +37,8 @@ public:
 
     void Render();
 
-    Intensity PixelDivider(float p1x, float p1y, float p2x, float p2y, int depth);
+    //Intensity PixelDivider(float p1x, float p1y, float p2x, float p2y, int depth);
 
-    Intensity Phong(float pixelX, float pixelY, int reflectionDepth);
+    Intensity Phong(Ray givenRay, int reflectionDepth);
 };
 
