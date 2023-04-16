@@ -110,7 +110,7 @@ Intensity Camera::Phong(float px, float py, int reflectionDepth)
     }
     
     // Ambient light
-    Intensity ambientLight = Intensity(0.3f, 0.3f, 0.3f);
+    Intensity ambientLight = Intensity(0.1f, 0.1f, 0.1f);
     Intensity finalColor;
     
     if (!isSphere)
@@ -147,7 +147,17 @@ Intensity Camera::Phong(float px, float py, int reflectionDepth)
     {
         pixelColor = hitPlane.GetColor() * ambientLight;
     }
-    
+
+    // State dictates whether it should be:
+    // 0 = default diffuse
+    // 1 = reflection
+    // 2 = refraction
+    int state = 0;
+
+    if (isSphere)
+    {
+        state = hitSphere.GetState();
+    }
     
     // Iterating through all lights
     for (int i = 0; i < lights.size(); i++)
@@ -191,7 +201,7 @@ Intensity Camera::Phong(float px, float py, int reflectionDepth)
         {
             for (int j = 0; j < spheres.size(); j++)
             {
-                if (chaseTheLight.intersectsSphere(spheres[i], blockContactPoint))
+                if (chaseTheLight.intersectsSphere(spheres[j], blockContactPoint))
                 {
                     // Check if distance between original and new is less than original - light = object between
                     if ((objectContactPoint - blockContactPoint).Length() < (objectContactPoint - lights[i].GetPosition()).Length())
@@ -213,27 +223,15 @@ Intensity Camera::Phong(float px, float py, int reflectionDepth)
                 }
             }
         }
-    
-        // State dictates whether it should be:
-        // 0 = default diffuse
-        // 1 = reflection
-        // 2 = refraction
-    
-        int state = 0;
-    
-        if (isSphere)
-        {
-            state = hitSphere.GetState();
-        }
-    
+
         // View direction vector from camera to hit point
         Vector3 viewDir = (objectContactPoint - cameraPosition).Normalize();
-    
+
         // Reflection direction vector
         Vector3 minusRayDir = ray.GetDirection() * (-1);
         Vector3 reflectDir = minusRayDir.Reflect(normal).Normalize();
         Vector3 helppls = chaseTheLight.GetDirection() - normal * normal.Dot(chaseTheLight.GetDirection()) * 2;
-    
+
         // Diffuse light
         Vector3 lightDir = (objectContactPoint - lights[i].GetPosition()).Normalize();
         float diff = std::max(0.0f, -normal.Dot(lightDir));
@@ -246,19 +244,28 @@ Intensity Camera::Phong(float px, float py, int reflectionDepth)
         {
             diffuseLight = objectColor * lights[i].GetColor() * diff;
         }
-    
+
         // Specular light
         Vector3 halfwayDir = (lightDir + viewDir).Normalize();
         float specularIntensity = 4.0f;
         float spec = pow(std::max(0.0f, normal.Dot(halfwayDir)), specularIntensity);
         spec = pow(std::max(viewDir.Dot(helppls), 0.0f), specularIntensity);
         Intensity specularLight = lights[i].GetColor() * spec;
-    
+
         if (!isBlocked)
         {
             finalColor = finalColor + diffuseLight + specularLight;
         }
     }
+
+    if (state == 1 && reflectionDepth > 0)
+    {
+        Vector3 reflectDir = ray.GetDirection().Reflect(normal).Normalize();
+        Ray reflectedRay(objectContactPoint + reflectDir * 0.001f, reflectDir);
+        Intensity reflectionColor = Phong(reflectedRay.GetPosition().x, reflectedRay.GetPosition().y, reflectionDepth - 1);
+        finalColor = finalColor + reflectionColor;
+    }
+
     return finalColor;
 }
 

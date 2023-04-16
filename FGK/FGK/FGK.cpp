@@ -6,9 +6,7 @@
 
 int main()
 {
-    //Mesh newMesh("Cone.obj");
     std::vector<Mesh> meshes;
-    //meshes.push_back(newMesh);
 
     int screenWidth = 800;
     int screenHeight = 600;
@@ -31,7 +29,7 @@ int main()
     spheres.push_back(Sphere(1.0f, Vector3(1.0f, -1.0f, -2.0f), 1, Intensity(1.0f, 0.0f, 0.0f)));
 
     std::vector<PointLight> lights;
-    PointLight light1(Vector3(0.0f, 1.0f, 0.0f), Intensity(1.0f, 1.0f, 1.0f), 250.0f, 10.0f, 1.0f, 0.14f, 0.07f);
+    PointLight light1(Vector3(0.0f, 1.8f, 0.0f), Intensity(0.7f, 0.7f, 0.7f), 250.0f, 10.0f, 1.0f, 0.14f, 0.07f);
     lights.push_back(light1);
 
     std::vector<Plane> planes;
