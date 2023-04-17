@@ -16,6 +16,7 @@ public:
 	Vector3 Cross(Vector3 givenVector);
 	Vector3 Normalize();
 	Vector3 Reflect(Vector3 normal);
+	static Vector3 Refract(Vector3 normal, Vector3 incident, float n1, float n2);
 	float AngleBetweenVectors(Vector3 givenVector);
 
 	void WriteCoordsToConsole();

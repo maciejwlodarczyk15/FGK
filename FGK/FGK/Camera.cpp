@@ -246,40 +246,6 @@ Intensity Camera::Phong(Ray givenRay, int reflectionDepth)
             diffuseLight = objectColor * lights[i].GetColor() * diff;
         }
 
-        //if (state == 2)
-        //{
-        //    float n1 = 1.0f;
-        //    float n2 = 1.5f;
-        //
-        //    float cosI = -normal.Dot(ray.GetDirection());
-        //    float sinT2 = (n1 / n2) * (n1 / n2) * (1 - cosI * cosI);
-        //
-        //    if (sinT2 > 1.0f)
-        //    {
-        //        // Total internal reflection
-        //        reflectDir = ray.GetDirection().Reflect(normal).Normalize();
-        //        diffuseLight = objectColor * lights[i].GetColor() * diff;
-        //    }
-        //
-        //    else
-        //    {
-        //        float cosT = sqrt(1.0f - sinT2);
-        //        Vector3 transmission = ((ray.GetDirection() + normal * cosI) / n2) - normal * cosT;
-        //        Ray refractedRay(objectContactPoint, transmission.Normalize());
-        //        Vector3 refractedHitPoint, refractedNormal;
-        //        float refractedDist;
-        //        if (refractedRay.intersectsSphere(objectPosition, objectRadius, refractedHitPoint, refractedNormal, refractedDist))
-        //        {
-        //            // Object inside sphere, flip the normal
-        //            refractedNormal = refractedNormal * -1;
-        //        }
-        //        Vector3 refractedViewDir = (refractedHitPoint - cameraPosition).Normalize();
-        //        Vector3 halfwayDir = (lightDir + refractedViewDir).Normalize();
-        //        float spec = pow(std::max(0.0f, refractedNormal.Dot(halfwayDir)), specularIntensity);
-        //        diffuseLight = objectColor * lights[i].GetColor() * (1.0f - spec) * diff;
-        //    }
-        //}
-
         // Specular light
         Vector3 halfwayDir = (lightDir + viewDir).Normalize();
         float specularIntensity = 4.0f;
@@ -301,7 +267,24 @@ Intensity Camera::Phong(Ray givenRay, int reflectionDepth)
         finalColor = finalColor + reflectionColor;
     }
 
+    if (state == 2)
+    {
+        float n1 = 1.0f;
+        float n2 = 1.5f;
 
+        Vector3 refractedEntry = Vector3::Refract(normal, ray.GetDirection(), n1, n2).Normalize();
+        Vector3 rayStartingPoint = objectContactPoint + refractedEntry * (2 * hitSphere.GetRadius() * 1.001f);
+        Ray throughSphere(rayStartingPoint, refractedEntry * (-1));
+
+        Vector3 insideContactPoint;
+        if (throughSphere.intersectsSphere(hitSphere, insideContactPoint))
+        {
+            Vector3 refractedExit = Vector3::Refract(refractedEntry * (-1), (insideContactPoint - hitSphere.GetCenter()).Normalize(), n2, n1).Normalize();
+            Ray refractedRay(insideContactPoint + refractedExit * 0.0001f, refractedExit);
+            Intensity refractedColor = Phong(refractedRay, reflectionDepth - 1);
+            finalColor = finalColor + refractedColor;
+        }
+    }
 
     return finalColor;
 }
@@ -343,7 +326,6 @@ void Camera::Render()
                 ray = Ray(rayOrigin, rayDir);
             }
 
-            //img.SetPixel(x, y, Phong((p1x + p2x) / 2, (p1y + p2y) / 2, 1));
             img.SetPixel(x, y, Phong(ray, 1));
             //img.SetPixel(x, y, PixelDivider(p1x, p1y, p2x, p2y, currentDepth)); // Pixel divider
         }

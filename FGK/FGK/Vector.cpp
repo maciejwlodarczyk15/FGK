@@ -55,6 +55,19 @@ Vector3 Vector3::Reflect(Vector3 normal)
 	return *this - normal * (this->Dot(normal) * 2.0f);
 }
 
+Vector3 Vector3::Refract(Vector3 normal, Vector3 incident, float n1, float n2)
+{
+	float eta = n1 / n2;
+	float cosThetaI = normal.Dot(incident);
+	float sin2ThetaI = std::max(float(0.0f), float(1 - cosThetaI * cosThetaI));
+	float sin2ThetaT = eta * eta * sin2ThetaI;
+	
+	// Handle total internal reflection for transmission
+	if (sin2ThetaT >= 1) return Vector3(0.0f,0.0f,0.0f);
+	float cosThetaT = std::sqrt(1 - sin2ThetaT);
+	return incident * (-1) * eta + normal * (eta * cosThetaI - cosThetaT);
+}
+
 float Vector3::AngleBetweenVectors(Vector3 givenVector)
 {
 	float dotProduct = this->Dot(givenVector);
