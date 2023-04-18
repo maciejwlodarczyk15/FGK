@@ -7,7 +7,7 @@
 #define M_PI 3.14159265358979323846
 
 Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree, float nPlane, float fPlane, int maxDepth,
-               Image img, Intensity objectColor, Intensity backgroundColor, 
+               Image img, Intensity backgroundColor, 
                std::vector<Sphere> spheres, std::vector<Mesh> meshes, std::vector<PointLight> lights, std::vector<Plane> planes, bool isOrtographic)
 {
     cameraPosition = camPos;
@@ -24,7 +24,6 @@ Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree
     farPlane = fPlane;
     this->isOrtographic = isOrtographic;
 
-    this->objectColor = objectColor;
     this->backgroundColor = backgroundColor;
     this->spheres = spheres;
     this->maxDepth = maxDepth;
@@ -36,26 +35,6 @@ Camera::Camera(Vector3 camPos, Vector3 camTarget, Vector3 camUp, float fovDegree
 Intensity Camera::Phong(Ray givenRay, int reflectionDepth)
 {
     Ray ray = givenRay;
-    // // Pixel/Camera settings
-    // px *= aspectRatio * tan(fov / 2.0f);
-    // py *= tan(fov / 2.0f);
-    // Vector3 rayDir(px, py, -1.0f);
-    // rayDir.Normalize();
-    // 
-    // if (!isOrtographic)
-    // {
-    //     Vector3 cameraDir = (cameraTarget - cameraPosition).Normalize();
-    //     Vector3 cameraVectorRight = cameraVecUp.Cross(cameraDir).Normalize();
-    //     Vector3 cameraUpNew = cameraDir.Cross(cameraVectorRight).Normalize();
-    //     rayDir = (cameraVectorRight * px + cameraUpNew * py + cameraDir / fov).Normalize();
-    // }
-    // 
-    // Ray ray(cameraPosition, rayDir);
-    // if (isOrtographic)
-    // {
-    //     Vector3 rayOrigin = cameraPosition + Vector3(1, 0, 0) * px + Vector3(0, 1, 0) * py;
-    //     ray = Ray(rayOrigin, rayDir);
-    // }
 
     // Checking if object hit, if hit drawColor = true
     Sphere hitSphere;
@@ -67,7 +46,6 @@ Intensity Camera::Phong(Ray givenRay, int reflectionDepth)
     bool drawColor = false;
     float depth = 9999.9f;
     Vector3 objectContactPoint = ray.GetPosition() + ray.GetDirection() * depth;
-    //Intensity testColor;
 
     for (int i = 0; i < spheres.size(); i++)
     {
@@ -79,7 +57,6 @@ Intensity Camera::Phong(Ray givenRay, int reflectionDepth)
                 depth = distanceToIntersect;
                 drawColor = true;
                 hitSphere = spheres[i];
-                //testColor = hitSphere.GetColor();
                 isSphere = true;
                 objectContactPoint = contactPoint;
             }
@@ -95,14 +72,11 @@ Intensity Camera::Phong(Ray givenRay, int reflectionDepth)
                 depth = distanceToIntersect;
                 drawColor = true;
                 hitPlane = planes[i];
-                //testColor = hitPlane.GetColor();
                 isSphere = false;
                 objectContactPoint = contactPoint;
             }
         }
     }
-
-    //return testColor;
 
     // Draw background
     if (!drawColor)
@@ -120,7 +94,7 @@ Intensity Camera::Phong(Ray givenRay, int reflectionDepth)
     }
     else
     {
-        finalColor = ambientLight * objectColor;
+        finalColor = ambientLight * hitSphere.GetColor();
     }
     
     bool isBlocked = false;
@@ -243,7 +217,7 @@ Intensity Camera::Phong(Ray givenRay, int reflectionDepth)
         }
         if (isSphere)
         {
-            diffuseLight = objectColor * lights[i].GetColor() * diff;
+            diffuseLight = hitSphere.GetColor() * lights[i].GetColor() * diff;
         }
 
         // Specular light

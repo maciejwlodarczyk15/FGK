@@ -21,15 +21,14 @@ int main()
     float farPlane = 100.0f;
     int maxDepth = 0;
 
-    Intensity objectColor(1.0f, 0.0f, 0.0f);
     Intensity backgroundColor(0.0f, 0.0f, 0.0f);
 
     std::vector<Sphere> spheres;
-    spheres.push_back(Sphere(1.0f, Vector3(-1.25f, -0.9f, -4.0f), 1, Intensity(1.0f, 0.0f, 0.0f)));
-    spheres.push_back(Sphere(1.0f, Vector3(1.25f, -0.9f, -1.5f), 2, Intensity(1.0f, 0.0f, 0.0f)));
+    spheres.push_back(Sphere(1.0f, Vector3(-1.25f, -0.9f, -4.0f), 1, Intensity(1.0f, 1.0f, 1.0f)));
+    spheres.push_back(Sphere(1.0f, Vector3(1.25f, -0.9f, -1.5f), 2, Intensity(1.0f, 1.0f, 1.0f)));
 
     std::vector<PointLight> lights;
-    PointLight light1(Vector3(0.0f, 1.8f, 0.0f), Intensity(0.7f, 0.7f, 0.7f), 250.0f, 10.0f, 1.0f, 0.14f, 0.07f);
+    PointLight light1(Vector3(0.0f, 1.9f, 0.0f), Intensity(0.6f, 0.6f, 0.6f), 250.0f, 10.0f, 1.0f, 0.14f, 0.07f);
     lights.push_back(light1);
 
     std::vector<Plane> planes;
@@ -49,7 +48,7 @@ int main()
     planes.push_back(frontPlane);
     
     Camera camera(camPos, camTarget, camUp, fov, farPlane, farPlane, maxDepth,
-        img, objectColor, backgroundColor, spheres, meshes, lights, planes, true);
+        img, backgroundColor, spheres, meshes, lights, planes, true);
 
     camera.Render();
 

@@ -23,7 +23,6 @@ private:
     float nearPlane;
     float farPlane;
     bool isOrtographic;
-    Intensity objectColor; 
     Intensity backgroundColor;
     std::vector<Sphere> spheres;
     std::vector<Mesh> meshes;
@@ -32,7 +31,7 @@ private:
 
 public:
     Camera(Vector3 camPos, Vector3 camTarget,  Vector3 camUp, float fovDegree, float nPlane, float fPlane, int maxDepth,
-        Image img, Intensity objectColor, Intensity backgroundColor, 
+        Image img, Intensity backgroundColor, 
         std::vector<Sphere> spheres, std::vector<Mesh> meshes, std::vector<PointLight> lights, std::vector<Plane> planes, bool isOrtographic);
 
     void Render();
