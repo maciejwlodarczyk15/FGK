@@ -30,7 +30,7 @@ bool Ray::intersectsSphere(Sphere sphere, Vector3& contactPoint)
 
 	float discriminant = b * b - a * c;
 
-    if (discriminant < 0) {
+    if (discriminant <= 0) {
         return false;
     }
     else {

@@ -148,7 +148,7 @@ Intensity Camera::Phong(Ray givenRay, int reflectionDepth)
             for (int j = 0; j < spheres.size(); j++)
             {
                 // check if hit any other sphere
-                if (chaseTheLight.intersectsSphere(spheres[i], blockContactPoint))
+                if (chaseTheLight.intersectsSphere(spheres[j], blockContactPoint))
                 {
                     // Check if distance between original and new is less than original - light = object between
                     if ((objectContactPoint - blockContactPoint).Length() < (objectContactPoint - lights[i].GetPosition()).Length())
